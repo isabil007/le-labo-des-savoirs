@@ -1,0 +1,28 @@
+{
+  "themes": [
+    {
+      "id": "jeux-en-famille",
+      "icone": "🎲",
+      "nom": "Jeux en famille",
+      "couleur": "tournesol",
+      "description": "Des jeux pour toutes les générations, à jouer ensemble autour de la table.",
+      "programmes": [
+        {
+          "id": "guerre-des-neurones",
+          "icone": "🧠",
+          "nom": "La guerre des neurones",
+          "devise": "Jeu dis, Jeu fais !",
+          "description": "Dix-huit mini-jeux tirés au sort : quiz, blind test, dessin, énigmes, puzzle, fous rires… Une tablette au centre, chacun joue avec son téléphone. Ou tout seul, avec un seul téléphone !",
+          "etiquettes": ["1 à 12 joueurs", "Dès 7 ans", "Téléphone + tablette"],
+          "nouveau": true,
+          "liens": [
+            { "texte": "Découvrir le jeu", "adresse": "/autour-de-la-table#guerre-des-neurones", "principal": true },
+            { "texte": "Jouer seul", "adresse": "/solo" },
+            { "texte": "Ouvrir la tablette", "adresse": "/tablette" },
+            { "texte": "Rejoindre une partie", "adresse": "/jouer" }
+          ]
+        }
+      ]
+    }
+  ]
+}

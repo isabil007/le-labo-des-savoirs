@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#151933">
+<title>Autour de la table</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lilita+One&display=swap">
+<!--
+  ════════════════════════════════════════════════════════════════════
+   AUTOUR DE LA TABLE — le site qui rassemble les jeux
+  ════════════════════════════════════════════════════════════════════
+   Ce site est une « ludothèque » : une vitrine qui présente chaque jeu,
+   permet de l'essayer dans le navigateur et explique comment y jouer
+   en vrai, avec une tablette et des téléphones.
+
+   POUR AJOUTER UN JEU
+   ───────────────────
+   1. Déposez le jeu dans son propre dossier : jeux/<nom-du-jeu>/
+   2. Ajoutez sa fiche dans la liste CATALOGUE, plus bas dans ce fichier.
+   Le site fabrique tout seul la carte d'accueil, la page de présentation
+   et la page « Essayer ». Rien d'autre à toucher.
+
+   LES PAGES
+   ─────────
+   Le site tient dans une seule page qui change de contenu selon ce qui
+   suit le « # » dans l'adresse :
+     (rien)                     → l'accueil et le catalogue
+     #guerre-des-neurones       → la présentation d'un jeu
+     #jouer-guerre-des-neurones → le jeu en plein écran
+   On peut donc envoyer à quelqu'un le lien direct vers un jeu.
+-->
+<style>
+  /* Mise en page : un bandeau, un grand titre avec la table vue du dessus, puis le catalogue en cartes. */
+  :root {
+    --nappe: #151933;
+    --nappe-2: #1E2348;
+    --nappe-3: #2A3166;
+    --trait: #3A427E;
+    --papier: #F4F5FB;
+    --brume: #A9AFD6;
+    --tournesol: #FFC93C;
+    --corail: #FF6B5B;
+    --menthe: #3DD6B5;
+    --lilas: #9B8CFF;
+    --bois: #C98B4E;
+    --sur-couleur: #151933;
+    --police-titre: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+    --police-texte: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--nappe); color: var(--papier);
+    font-family: var(--police-texte); font-size: 17px; line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+  h1, h2, h3 { font-family: var(--police-titre); font-weight: 400; line-height: 1.08; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; border: 0; cursor: pointer; background: none; }
+  :focus-visible { outline: 3px solid var(--tournesol); outline-offset: 3px; border-radius: 6px; }
+
+  .page { max-width: 1160px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  /* ─── Bandeau ─── */
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--nappe); }
+  .bandeau { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: rgba(21, 25, 51, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--trait); }
+  .bandeau .page { display: flex; align-items: center; gap: 20px; padding-block: 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--police-titre); font-size: 1.35rem; color: var(--tournesol); white-space: nowrap; }
+  .logo svg { width: 34px; height: 34px; flex: none; }
+  .navigation { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  .navigation a { text-decoration: none; padding: 8px 12px; border-radius: 99px; color: var(--brume); font-weight: 700; font-size: .95rem; }
+  .navigation a:hover { color: var(--papier); background: var(--nappe-2); }
+
+  /* ─── Boutons ─── */
+  .bouton { display: inline-flex; align-items: center; justify-content: center; gap: .5em; min-height: 52px; padding: .65em 1.4em; border-radius: 99px; background: var(--tournesol); color: var(--sur-couleur); font-family: var(--police-titre); font-size: 1.12rem; letter-spacing: .02em; text-decoration: none; box-shadow: 0 4px 0 #C99A1E; transition: transform .08s, box-shadow .08s; }
+  .bouton:active { transform: translateY(3px); box-shadow: 0 1px 0 #C99A1E; }
+  .bouton.secondaire { background: var(--nappe-3); color: var(--papier); box-shadow: 0 4px 0 #11152F; }
+  .bouton.secondaire:active { box-shadow: 0 1px 0 #11152F; }
+  .boutons { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* ─── Accueil : le grand titre ─── */
+  .ouverture { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 40px; align-items: center; padding-block: 56px 40px; }
+  .surtitre { font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--menthe); }
+  .ouverture h1 { font-size: clamp(2.6rem, 5.6vw, 4.4rem); margin: 12px 0 18px; }
+  .ouverture h1 em { font-style: normal; color: var(--tournesol); }
+  .ouverture .chapeau { font-size: 1.2rem; color: var(--brume); max-width: 46ch; margin-bottom: 26px; }
+  .table-vue { width: 100%; max-width: 480px; justify-self: center; aspect-ratio: 1; }
+  .table-vue svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .siege { transform-box: fill-box; transform-origin: center; animation: salue 3.2s ease-in-out infinite; }
+  @keyframes salue { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-6px); } }
+  .repere { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 26px; color: var(--brume); font-size: .95rem; }
+  .repere b { display: block; font-family: var(--police-titre); font-weight: 400; font-size: 1.6rem; color: var(--papier); line-height: 1.1; }
+
+  /* ─── Sections ─── */
+  .section { padding-block: 44px; border-top: 1px solid var(--trait); }
+  .section-tete { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+  .section-tete h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
+  .section-tete p { color: var(--brume); max-width: 52ch; }
+
+  /* ─── Catalogue ─── */
+  .catalogue { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 18px; }
+  .fiche-jeu { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); background: var(--nappe-2); border: 1px solid var(--trait); border-radius: 24px; overflow: hidden; }
+  .fiche-visuel { background: var(--c, var(--tournesol)); color: var(--sur-couleur); padding: 26px; display: grid; align-content: space-between; gap: 18px; min-height: 280px; position: relative; }
+  .fiche-visuel .icone { font-size: 4.2rem; line-height: 1; }
+  .fiche-visuel h3 { font-size: clamp(1.9rem, 3vw, 2.4rem); }
+  .fiche-visuel .accroche { font-weight: 700; }
+  .fiche-corps { padding: 24px; display: grid; gap: 16px; align-content: start; min-width: 0; }
+  .pastilles { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pastille { background: var(--nappe-3); border-radius: 99px; padding: 4px 12px; font-size: .9rem; font-weight: 700; }
+  .sous-titre { font-family: var(--police-titre, inherit); color: var(--tournesol); font-size: 1.2em; margin: 2px 0 6px; letter-spacing: .02em; }
+  .mini-jeux { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .mini-jeux li { display: flex; gap: 10px; align-items: baseline; color: var(--brume); }
+  .mini-jeux li span { font-size: 1.2rem; }
+  .mini-jeux li b { color: var(--papier); }
+  .emplacement { border: 2px dashed var(--trait); border-radius: 24px; padding: 26px; display: grid; gap: 12px; align-content: center; justify-items: start; color: var(--brume); min-height: 280px; }
+  .emplacement .plus { width: 54px; height: 54px; border-radius: 50%; border: 2px dashed var(--trait); display: grid; place-items: center; font-family: var(--police-titre); font-size: 1.8rem; color: var(--brume); }
+  .emplacement h3 { color: var(--papier); font-size: 1.5rem; }
+
+  /* ─── Comment ça marche (une vraie séquence : les numéros ont un sens) ─── */
+  .etapes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; counter-reset: etape; padding: 0; margin: 0; list-style: none; }
+  .etapes li { background: var(--nappe-2); border-radius: 20px; padding: 22px; display: grid; gap: 8px; align-content: start; counter-increment: etape; }
+  .etapes li::before { content: counter(etape); width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--tournesol); color: var(--sur-couleur); font-family: var(--police-titre); font-size: 1.4rem; }
+  .etapes h3 { font-size: 1.35rem; }
+  .etapes p { color: var(--brume); }
+  .atouts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+  .atout { border-left: 4px solid var(--c); padding: 4px 0 4px 14px; }
+  .atout b { display: block; margin-bottom: 2px; }
+  .atout span { color: var(--brume); font-size: .95rem; }
+
+  /* ─── Présentation d'un jeu ─── */
+  .retour { display: inline-flex; align-items: center; gap: 6px; color: var(--brume); text-decoration: none; font-weight: 700; padding-block: 24px 8px; }
+  .retour:hover { color: var(--papier); }
+  .tete-jeu { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 22px; align-items: center; padding-block: 12px 30px; }
+  .tete-jeu .medaillon { width: 112px; height: 112px; border-radius: 28px; background: var(--c); display: grid; place-items: center; font-size: 4rem; }
+  .tete-jeu h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); }
+  .tete-jeu p { color: var(--brume); font-size: 1.2rem; max-width: 60ch; margin-top: 8px; }
+  .grille-mini { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+  .carte-mini { background: var(--nappe-2); border-radius: 18px; padding: 18px; display: grid; gap: 6px; align-content: start; border-top: 5px solid var(--c); }
+  .carte-mini .icone { font-size: 2rem; }
+  .carte-mini h3 { font-size: 1.25rem; }
+  .carte-mini p { color: var(--brume); font-size: .95rem; }
+  .deux-colonnes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .encart { background: var(--nappe-2); border-radius: 20px; padding: 24px; display: grid; gap: 12px; align-content: start; }
+  .encart h3 { font-size: 1.5rem; }
+  .encart ol, .encart ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; color: var(--brume); }
+  .encart ol b, .encart ul b { color: var(--papier); }
+  .encart code { background: var(--nappe-3); color: var(--tournesol); padding: 1px 7px; border-radius: 6px; font-size: .92em; }
+  .note { color: var(--brume); font-size: .95rem; }
+
+  /* ─── Le jeu en plein écran ─── */
+  .salle-de-jeu { position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--nappe); padding-top: env(safe-area-inset-top, 0px); }
+  .salle-de-jeu .barre { display: flex; align-items: center; gap: 14px; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--trait); }
+  .salle-de-jeu .barre .retour { padding: 0; }
+  .salle-de-jeu .barre strong { font-family: var(--police-titre); font-weight: 400; font-size: 1.2rem; margin-left: auto; color: var(--tournesol); }
+  .salle-de-jeu iframe { flex: 1; width: 100%; border: 0; display: block; background: var(--nappe); }
+
+  /* ─── Pied de page ─── */
+  .pied { border-top: 1px solid var(--trait); padding-block: 30px 40px; color: var(--brume); font-size: .95rem; display: grid; gap: 8px; }
+  .pied strong { color: var(--papier); }
+
+  @media (max-width: 900px) {
+    .ouverture { grid-template-columns: minmax(0, 1fr); padding-block: 36px 28px; }
+    .table-vue { max-width: 340px; order: -1; }
+    .catalogue, .fiche-jeu, .deux-colonnes { grid-template-columns: minmax(0, 1fr); }
+    .etapes { grid-template-columns: minmax(0, 1fr); }
+    .atouts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .fiche-visuel, .emplacement { min-height: 0; }
+  }
+  @media (max-width: 520px) {
+    .navigation { display: none; }
+    .tete-jeu { grid-template-columns: minmax(0, 1fr); }
+    .tete-jeu .medaillon { width: 84px; height: 84px; font-size: 3rem; border-radius: 22px; }
+    .atouts { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { .siege { animation: none; } }
+</style>
+</head>
+<body>
+<header class="bandeau">
+  <div class="page">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="11" fill="#C98B4E"/><rect x="15" y="16" width="10" height="8" rx="1.5" fill="#151933"/><circle cx="20" cy="4.5" r="3.5" fill="#FF6B5B"/><circle cx="35.5" cy="20" r="3.5" fill="#FFC93C"/><circle cx="20" cy="35.5" r="3.5" fill="#3DD6B5"/><circle cx="4.5" cy="20" r="3.5" fill="#9B8CFF"/></svg>
+      Autour de la table
+    </a>
+    <nav class="navigation" aria-label="Navigation principale">
+      <a href="#" data-ancre="catalogue">Les jeux</a>
+      <a href="#" data-ancre="fonctionnement">Comment ça marche</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu"></main>
+
+<footer class="pied page">
+  <p><strong>Autour de la table</strong> · des jeux pour toutes les générations, à jouer ensemble avec une tablette et des téléphones.</p>
+  <p>Chaque jeu fonctionne sur iPhone, Android et tablette, directement dans le navigateur, sans rien installer.</p>
+</footer>
+
+<script>
+/*
+ * ════════════════════════════════════════════════════════════════════
+ *  LE CATALOGUE : une fiche par jeu
+ * ════════════════════════════════════════════════════════════════════
+ *  Pour ajouter un jeu, copiez la fiche ci-dessous et adaptez-la :
+ *    id        : le nom court utilisé dans l'adresse (#mon-jeu), sans espace ni accent
+ *    couleur   : la couleur de sa carte (une des couleurs du site, ou un code #RRGGBB)
+ *    essai     : la page qui fait tourner le jeu dans le navigateur (simulateur)
+ *    tablette / joueur : les pages du vrai jeu, quand un serveur est lancé
+ *                (si le site est ouvert sans serveur, ces boutons sont remplacés
+ *                 par la marche à suivre pour en lancer un)
+ *    miniJeux  : facultatif, la liste des épreuves du jeu
+ *    piment    : facultatif, ce qui fait monter la tension pendant la partie
+ */
+const CATALOGUE = [
+  {
+    id: 'guerre-des-neurones',
+    nom: 'La guerre des neurones',
+    sousTitre: 'Jeu dis, Jeu fais !',
+    icone: '🧠',
+    couleur: 'var(--tournesol)',
+    accroche: 'Dix-huit jeux tirés au sort, une ligne d\'arrivée, des gages secrets : de quoi faire vibrer petits-enfants et grands-parents.',
+    description: 'La tablette, posée au centre de la table, sert de plateau. Chacun joue avec son téléphone : on répond, on dessine, on cherche, on écoute… En partie surprise, le hasard choisit les jeux et fixe une ligne d\'arrivée ; le premier qui la franchit déclenche la Grande Finale. Un commentateur taquin anime le classement, et le tribunal des gages peut tout renverser avant le podium.',
+    joueurs: '1 à 12 joueurs',
+    duree: 'environ 40 minutes',
+    age: 'dès 8 ans',
+    essai: 'simulateur.html',
+    tablette: 'tablette.html',
+    joueur: 'joueur.html',
+    miniJeux: [
+      { icone: '🧠', nom: 'Le grand quiz', texte: 'Culture générale avec une touche belge, et des questions « jeunesse » et « sagesse » pour que chaque génération brille.', couleur: 'var(--corail)' },
+      { icone: '🎨', nom: 'Dessine et devine', texte: 'Un joueur dessine du bout du doigt, le dessin apparaît en direct sur la tablette, les autres devinent.', couleur: 'var(--tournesol)' },
+      { icone: '🔍', nom: 'Les 7 erreurs en 1 minute', texte: 'Deux paysages composés au hasard à chaque partie. Tout le monde cherche en même temps.', couleur: 'var(--menthe)' },
+      { icone: '🔎', nom: 'Le zoom infernal', texte: 'Une image très agrandie se dévoile peu à peu. Une seule réponse par joueur : le plus rapide gagne le plus !', couleur: 'var(--lilas)' },
+      { icone: '🎭', nom: 'Les pièges du français', texte: '« Vous vous tûtes », « les poules du couvent couvent »… On rit, puis on apprend la règle.', couleur: 'var(--corail)' },
+      { icone: '🐘', nom: 'Mémoire d\'éléphant', texte: 'Une grille d\'objets à retenir en quelques secondes… puis la question piège. La grille grandit à chaque tour.', couleur: 'var(--lilas)' },
+      { icone: '🧩', nom: 'Casse-tête', texte: 'Suites de nombres, motifs, balances en images et intrus : des énigmes inventées par le jeu, jamais deux fois les mêmes.', couleur: 'var(--tournesol)' },
+      { icone: '👨‍🍳', nom: 'Les Toqués', texte: 'La recette mystère : les ingrédients apparaissent un à un, devinez le plat au plus vite ! Et un quiz gourmand, de Liège à Tokyo.', couleur: 'var(--corail)' },
+      { icone: '🎵', nom: 'Blind test des tubes', texte: 'Des Beatles à Stromae : la tablette joue l\'extrait officiel, trouvez le titre ou l\'artiste !', couleur: 'var(--lilas)' },
+      { icone: '🚩', nom: 'Drapeaux du monde', texte: 'À quel pays appartient ce drapeau ? Les mauvaises réponses se ressemblent beaucoup…', couleur: 'var(--corail)' },
+      { icone: '🔀', nom: 'Le grand mélange', texte: 'Chaque question change de thème, au hasard : quiz, drapeau, recette, énigme, tube…', couleur: 'var(--tournesol)' },
+      { icone: '🧮', nom: 'Calcul mental', texte: 'Additions, tables, pourcentages, monnaie… et le piège des priorités. Des calculs toujours nouveaux, sans papier ni calculette !', couleur: 'var(--menthe)' },
+      { icone: '🕵️', nom: 'Les Énigmes', texte: 'Le père de Marie a cinq filles… Devinettes de logique et questions-pièges : lisez bien, il y a toujours un piège !', couleur: 'var(--tournesol)' },
+      { icone: '✏️', nom: 'Mots croisés', texte: 'Une définition, des cases et une première lettre : quel mot va dans la grille ? Les propositions se ressemblent toutes…', couleur: 'var(--menthe)' },
+      { icone: '🖼️', nom: 'Le Puzzle', texte: 'Neuf pièces mélangées qui se remettent en place une à une : reconnaîtrez-vous l\'image avant la fin ?', couleur: 'var(--corail)' },
+      { icone: '🤡', nom: 'Vrai ou Farfelu ?', texte: 'Quatre affirmations délirantes, une seule est vraie. Les wombats font-ils vraiment des crottes carrées ?', couleur: 'var(--tournesol)' },
+      { icone: '🤪', nom: 'Les Fous Rires', texte: 'Inventez la suite la plus drôle d\'une phrase absurde, votez pour la meilleure… et méfiez-vous de la réponse glissée par le jeu ! Entre deux, des devinettes absurdes.', couleur: 'var(--corail)' },
+      { icone: '🚦', nom: 'Feu vert !', texte: 'Le cœur bat, l\'écran attend… et passe au VERT : tapez le premier ! Gare aux faux départs et au piège rouge.', couleur: 'var(--menthe)' }
+    ],
+    piment: [
+      { icone: '🎲', nom: 'La partie surprise', texte: 'Les jeux sont tirés au sort et une ligne d\'arrivée est fixée (entre 8 000 et 11 000 points). Personne ne sait ce qui vient ensuite !', couleur: 'var(--tournesol)' },
+      { icone: '🎯', nom: 'Défis et coups de théâtre', texte: 'Chaque manche, un défi pour tous ; et parfois, un défi inattendu pour un joueur tiré au sort : quitte ou double, duel éclair, trèfle porte-bonheur…', couleur: 'var(--menthe)' },
+      { icone: '⚡', nom: 'La Grande Finale', texte: 'Dès que quelqu\'un franchit la ligne d\'arrivée, la manche suivante compte double. Tout peut basculer.', couleur: 'var(--corail)' },
+      { icone: '🤫', nom: 'Les gages secrets', texte: 'Chacun reçoit un gage à accomplir en douce. À la fin, la table vote : gage réussi, +1 500 points… et le podium peut changer !', couleur: 'var(--lilas)' },
+      { icone: '🏆', nom: 'Humour et prix', texte: 'Un commentateur taquin anime chaque classement ; au podium : la manche de feu, l\'agent très secret… et le prix de la tortue.', couleur: 'var(--menthe)' }
+    ]
+  }
+];
+
+/* ═══════════ À partir d'ici, le site se construit tout seul ═══════════ */
+
+/* Fabriquer un élément de page, en écrivant le texte comme du texte (jamais comme du code). */
+function h(balise, attributs, ...enfants) {
+  const el = document.createElement(balise);
+  Object.entries(attributs || {}).forEach(([cle, valeur]) => {
+    if (valeur === null || valeur === undefined || valeur === false) return;
+    if (cle === 'class') el.className = valeur;
+    else if (cle === 'style') el.setAttribute('style', valeur);
+    else if (cle.startsWith('on')) el.addEventListener(cle.slice(2), valeur);
+    else el.setAttribute(cle, valeur);
+  });
+  enfants.flat(Infinity).forEach((e) => { if (e !== null && e !== undefined && e !== false) el.append(e instanceof Node ? e : String(e)); });
+  return el;
+}
+
+/* Le site est-il servi par le serveur du jeu ? Si oui, on peut proposer de jouer « en vrai ». */
+let serveurPresent = false;
+
+const contenu = document.getElementById('contenu');
+
+/* ─── La table vue du dessus : douze places, un avatar sur certaines ─── */
+function tableVueDuDessus() {
+  const avatars = ['🦊', '🐻', '🦉', '🐸', '🦁', '🐧', '🐙', '🐢'];
+  const couleurs = ['#FF6B5B', '#FFC93C', '#3DD6B5', '#9B8CFF'];
+  let places = '';
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const x = 200 + Math.cos(a) * 168, y = 200 + Math.sin(a) * 168;
+    const occupe = i % 3 !== 2 ? avatars[(i * 5) % avatars.length] : null;
+    places += '<g class="siege" style="animation-delay:' + (i * 0.27).toFixed(2) + 's">' +
+      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="24" fill="' + (occupe ? couleurs[i % 4] : 'none') + '" stroke="' + (occupe ? 'none' : '#3A427E') + '" stroke-width="2" stroke-dasharray="' + (occupe ? '0' : '5 5') + '"/>' +
+      (occupe ? '<text x="' + x.toFixed(1) + '" y="' + (y + 9).toFixed(1) + '" text-anchor="middle" font-size="26">' + occupe + '</text>' : '') + '</g>';
+  }
+  return '<svg viewBox="0 0 400 400" role="img" aria-label="Une table ronde vue du dessus : une tablette au centre et des joueurs tout autour">' +
+    '<circle cx="200" cy="200" r="130" fill="#C98B4E"/><circle cx="200" cy="200" r="130" fill="none" stroke="#A86F3A" stroke-width="6"/>' +
+    '<circle cx="200" cy="200" r="112" fill="none" stroke="#B57C42" stroke-width="2" opacity=".6"/>' +
+    '<g transform="rotate(-8 200 200)"><rect x="142" y="158" width="116" height="84" rx="10" fill="#151933"/><rect x="150" y="166" width="100" height="68" rx="4" fill="#1E2348"/>' +
+    '<text x="200" y="196" text-anchor="middle" font-family="Lilita One, Trebuchet MS, sans-serif" font-size="22" letter-spacing="4" fill="#FFC93C">BRIK</text>' +
+    '<rect x="166" y="208" width="30" height="12" rx="3" fill="#FF6B5B"/><rect x="204" y="208" width="30" height="12" rx="3" fill="#3DD6B5"/></g>' +
+    places + '</svg>';
+}
+
+/* ─── L'accueil ─── */
+function pageAccueil() {
+  const vedette = CATALOGUE[0];
+  const cartes = CATALOGUE.map((jeu) => h('article', { class: 'fiche-jeu' },
+    h('div', { class: 'fiche-visuel', style: '--c:' + jeu.couleur },
+      h('span', { class: 'icone', 'aria-hidden': 'true' }, jeu.icone),
+      h('div', {}, h('h3', {}, jeu.nom), jeu.sousTitre ? h('p', { class: 'sous-titre' }, jeu.sousTitre) : null, h('p', { class: 'accroche' }, jeu.accroche))),
+    h('div', { class: 'fiche-corps' },
+      h('div', { class: 'pastilles' }, h('span', { class: 'pastille' }, jeu.joueurs), h('span', { class: 'pastille' }, jeu.duree), h('span', { class: 'pastille' }, jeu.age)),
+      jeu.miniJeux ? h('ul', { class: 'mini-jeux' }, jeu.miniJeux.map((m) => h('li', {}, h('span', { 'aria-hidden': 'true' }, m.icone), h('b', {}, m.nom)))) : null,
+      h('div', { class: 'boutons' },
+        h('a', { class: 'bouton', href: '#jouer-' + jeu.id }, 'Essayer'),
+        h('a', { class: 'bouton secondaire', href: '#' + jeu.id }, 'Découvrir')))));
+
+  return h('div', {},
+    h('section', { class: 'page ouverture' },
+      h('div', {},
+        h('span', { class: 'surtitre' }, 'Jeux de société sur tablette et téléphones'),
+        h('h1', {}, 'Des jeux qui rassemblent ', h('em', {}, 'toutes les générations')),
+        h('p', { class: 'chapeau' }, 'Une tablette au milieu de la table, un téléphone dans chaque main, et toute la famille joue ensemble, de 8 à 88 ans.'),
+        h('div', { class: 'boutons' },
+          h('a', { class: 'bouton', href: '#jouer-' + vedette.id }, 'Essayer ' + vedette.nom),
+          h('a', { class: 'bouton secondaire', href: '#', 'data-ancre': 'fonctionnement' }, 'Comment ça marche')),
+        h('div', { class: 'repere' },
+          h('span', {}, h('b', {}, '1 à 12'), 'joueurs'),
+          h('span', {}, h('b', {}, '0 €'), 'rien à installer'),
+          h('span', {}, h('b', {}, 'iPhone · Android'), 'et tablette'))),
+      h('div', { class: 'table-vue', 'data-table': '' })),
+
+    h('section', { class: 'section page', id: 'catalogue' },
+      h('div', { class: 'section-tete' },
+        h('h2', {}, 'Les jeux de la ludothèque'),
+        h('p', {}, CATALOGUE.length + (CATALOGUE.length > 1 ? ' jeux disponibles' : ' jeu disponible') + ' pour l\'instant. D\'autres viendront rejoindre la table.')),
+      h('div', { class: 'catalogue' },
+        cartes,
+        h('div', { class: 'emplacement' },
+          h('span', { class: 'plus', 'aria-hidden': 'true' }, '+'),
+          h('h3', {}, 'Une place libre à table'),
+          h('p', {}, 'Le prochain jeu de la ludothèque viendra s\'installer ici. Une idée de jeu à créer ? Elle a sa place.')))),
+
+    h('section', { class: 'section page', id: 'fonctionnement' },
+      h('div', { class: 'section-tete' },
+        h('h2', {}, 'Comment ça marche'),
+        h('p', {}, 'Trois gestes, et la partie commence. Personne n\'a besoin de télécharger quoi que ce soit.')),
+      h('ol', { class: 'etapes' },
+        h('li', {}, h('h3', {}, 'Ouvrez le jeu sur la tablette'), h('p', {}, 'Posez-la au centre de la table. Elle affiche un code de quatre lettres et un QR code.')),
+        h('li', {}, h('h3', {}, 'Chacun scanne le QR code'), h('p', {}, 'Avec l\'appareil photo de son téléphone. On choisit son prénom et son avatar.')),
+        h('li', {}, h('h3', {}, 'On joue, on compte les points'), h('p', {}, 'La tablette pose les questions et affiche le dessin en cours. Les téléphones servent de manettes.'))),
+      h('div', { class: 'atouts' },
+        h('div', { class: 'atout', style: '--c:var(--corail)' }, h('b', {}, 'Lisible de loin'), h('span', {}, 'De grands caractères pensés pour les personnes malvoyantes.')),
+        h('div', { class: 'atout', style: '--c:var(--tournesol)' }, h('b', {}, 'Couleurs et formes'), h('span', {}, '▲ ◆ ● ■ : chaque réponse se reconnaît même sans voir les couleurs.')),
+        h('div', { class: 'atout', style: '--c:var(--menthe)' }, h('b', {}, 'Retour automatique'), h('span', {}, 'Un téléphone qui se met en veille retrouve sa place et son score.')),
+        h('div', { class: 'atout', style: '--c:var(--lilas)' }, h('b', {}, 'Sans compte'), h('span', {}, 'Ni inscription, ni adresse e-mail : un prénom suffit.'))))
+  );
+}
+
+/* ─── La présentation d'un jeu ─── */
+function pageJeu(jeu) {
+  const jouerEnVrai = serveurPresent
+    ? h('div', { class: 'encart' },
+        h('h3', {}, 'Jouer pour de vrai'),
+        h('p', { class: 'note' }, 'Le serveur du jeu est en marche. Ouvrez l\'écran de la tablette, puis faites scanner le QR code aux joueurs. Sans QR code, ils peuvent aussi taper l\'adresse courte affichée sous le code de la partie.'),
+        h('div', { class: 'boutons' },
+          h('a', { class: 'bouton', href: jeu.tablette }, 'Ouvrir l\'écran tablette'),
+          h('a', { class: 'bouton secondaire', href: jeu.joueur }, 'Je suis un joueur')))
+    : h('div', { class: 'encart' },
+        h('h3', {}, 'Jouer pour de vrai'),
+        h('p', { class: 'note' }, 'Pour que les téléphones se connectent à la tablette, il faut lancer le petit serveur du jeu, sur un ordinateur de la maison ou chez un hébergeur.'),
+        h('ol', {},
+          h('li', {}, 'Sur un ordinateur Windows relié à votre Wi-Fi, double-cliquez sur ', h('b', {}, 'INSTALLER'), ' (une seule fois).'),
+          h('li', {}, 'À chaque partie, double-cliquez sur ', h('b', {}, 'LANCER-LE-JEU'), ' : l\'écran de la tablette s\'ouvre tout seul.'),
+          h('li', {}, 'Sur la tablette, tapez simplement ', h('code', {}, 'tablee.local/tablette'), ' (ou l\'adresse en chiffres affichée par l\'ordinateur).'),
+          h('li', {}, 'Les joueurs scannent le QR code… et c\'est parti !')),
+        h('p', { class: 'note' }, 'Le mode d\'emploi détaillé est dans le fichier LISEZ-MOI.md du projet.'));
+
+  return h('div', { class: 'page' },
+    h('a', { class: 'retour', href: '#' }, '← Tous les jeux'),
+    h('div', { class: 'tete-jeu', style: '--c:' + jeu.couleur },
+      h('div', { class: 'medaillon', 'aria-hidden': 'true' }, jeu.icone),
+      h('div', {},
+        h('h1', {}, jeu.nom),
+        jeu.sousTitre ? h('p', { class: 'sous-titre' }, jeu.sousTitre) : null,
+        h('p', {}, jeu.description),
+        h('div', { class: 'pastilles', style: 'margin-top:14px' }, h('span', { class: 'pastille' }, jeu.joueurs), h('span', { class: 'pastille' }, jeu.duree), h('span', { class: 'pastille' }, jeu.age)))),
+    jeu.miniJeux ? h('section', { class: 'section' },
+      h('div', { class: 'section-tete' }, h('h2', {}, 'Au programme'), h('p', {}, 'En partie surprise, le hasard choisit les épreuves ; l\'animateur peut aussi composer lui-même le menu de la soirée.')),
+      h('div', { class: 'grille-mini' }, jeu.miniJeux.map((m) => h('div', { class: 'carte-mini', style: '--c:' + m.couleur },
+        h('span', { class: 'icone', 'aria-hidden': 'true' }, m.icone), h('h3', {}, m.nom), h('p', {}, m.texte))))) : null,
+    jeu.piment ? h('section', { class: 'section' },
+      h('div', { class: 'section-tete' }, h('h2', {}, 'Le piment de la soirée'), h('p', {}, 'Ce qui fait monter l\'adrénaline… et les éclats de rire.')),
+      h('div', { class: 'grille-mini' }, jeu.piment.map((m) => h('div', { class: 'carte-mini', style: '--c:' + m.couleur },
+        h('span', { class: 'icone', 'aria-hidden': 'true' }, m.icone), h('h3', {}, m.nom), h('p', {}, m.texte))))) : null,
+    h('section', { class: 'section' },
+      h('div', { class: 'deux-colonnes' },
+        h('div', { class: 'encart' },
+          h('h3', {}, 'L\'essayer tout de suite'),
+          h('p', { class: 'note' }, 'Le simulateur affiche la tablette et un téléphone côte à côte. Des robots complètent la table : vous pouvez tester toutes les épreuves seul, sans rien installer.'),
+          h('div', { class: 'boutons' }, h('a', { class: 'bouton', href: '#jouer-' + jeu.id }, 'Lancer le simulateur'))),
+        jouerEnVrai)));
+}
+
+/* ─── Le jeu en plein écran ─── */
+function pageJouer(jeu) {
+  return h('div', { class: 'salle-de-jeu' },
+    h('div', { class: 'barre' },
+      h('a', { class: 'retour', href: '#' + jeu.id }, '← Retour'),
+      h('strong', {}, jeu.icone + ' ' + jeu.nom)),
+    h('iframe', { src: jeu.essai, title: jeu.nom + ' : simulateur', allow: 'autoplay' }));
+}
+
+/* ═══════════ L'aiguillage : quelle page afficher selon l'adresse ? ═══════════ */
+
+function afficher() {
+  const ancre = location.hash.replace('#', '');
+  const jeu = CATALOGUE.find((j) => j.id === ancre);
+  const aJouer = CATALOGUE.find((j) => 'jouer-' + j.id === ancre);
+  let page;
+  if (aJouer) { page = pageJouer(aJouer); document.title = aJouer.nom + ' · Autour de la table'; }
+  else if (jeu) { page = pageJeu(jeu); document.title = jeu.nom + ' · Autour de la table'; }
+  else { page = pageAccueil(); document.title = 'Autour de la table'; }
+  contenu.replaceChildren(page);
+  // La table vue du dessus est un dessin que NOUS fabriquons : on peut l'insérer tel quel.
+  const vue = contenu.querySelector('[data-table]');
+  if (vue) vue.innerHTML = tableVueDuDessus();
+  // En plein écran, on masque le reste du site pour laisser toute la place au jeu.
+  document.querySelector('.bandeau').hidden = !!aJouer;
+  document.querySelector('.pied').hidden = !!aJouer;
+  document.body.style.overflow = aJouer ? 'hidden' : '';
+  // Faut-il descendre jusqu'à une section précise, ou revenir en haut de la page ?
+  const cible = ancreVisee && document.getElementById(ancreVisee);
+  ancreVisee = null;
+  if (cible) cible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else window.scrollTo(0, 0);
+}
+
+/* Les liens « Les jeux » et « Comment ça marche » ramènent à l'accueil puis descendent jusqu'à la bonne section. */
+let ancreVisee = null;
+document.addEventListener('click', (ev) => {
+  const lien = ev.target.closest('[data-ancre]');
+  if (!lien) return;
+  ev.preventDefault();
+  ancreVisee = lien.getAttribute('data-ancre');
+  if (location.hash && location.hash !== '#') location.hash = ''; // l'accueil s'affichera au changement d'adresse
+  else afficher();
+});
+
+window.addEventListener('hashchange', afficher);
+afficher();
+
+/* Si le site est servi par le serveur du jeu, celui-ci répond à /api/adresse : on active alors « Jouer pour de vrai ». */
+fetch('/api/adresse').then((r) => r.ok ? r.json() : null).then((d) => {
+  if (d && d.adresse) { serveurPresent = true; afficher(); }
+}).catch(() => {});
+</script>
+</body>
+</html>

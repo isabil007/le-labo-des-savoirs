@@ -1,0 +1,40 @@
+<!doctype html>
+<!--
+  ════════════════════════════════════════════════════════════════════
+   LA GUERRE DES NEURONES — La page des TÉLÉPHONES
+  ════════════════════════════════════════════════════════════════════
+   La même page pour iPhone et pour Android : c'est tout l'intérêt
+   d'une application web. Elle s'ouvre dans le navigateur habituel
+   (Safari, Chrome, Samsung Internet…), sans rien installer.
+
+   Astuce : dans le menu « Partager » de Safari ou le menu ⋮ de Chrome,
+   « Ajouter à l'écran d'accueil » donne au jeu une icône, comme une
+   vraie application.
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#151933">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>La guerre des neurones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lilita+One&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="telephone">
+    <header class="entete" id="entete" hidden></header>
+    <main class="ecran" id="ecran"></main>
+  </div>
+  <div class="hors-ligne" id="hors-ligne" hidden>Connexion perdue… reconnexion en cours.</div>
+
+  <script src="js/connexion.js"></script>
+  <script src="js/commun.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/toile.js"></script>
+  <script src="js/joueur.js"></script>
+</body>
+</html>

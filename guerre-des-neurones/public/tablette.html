@@ -1,0 +1,50 @@
+<!doctype html>
+<!--
+  ════════════════════════════════════════════════════════════════════
+   LA GUERRE DES NEURONES — La page de la TABLETTE
+  ════════════════════════════════════════════════════════════════════
+   Cette page ne contient presque rien : un bandeau (le nom du jeu, le
+   code de la salle, les joueurs, les boutons de l'animateur) et une
+   grande « scène » vide. C'est le script tablette.js qui remplit la
+   scène au fil de la partie, selon les ordres du moteur.
+
+   L'ordre des scripts compte : la connexion d'abord, puis les outils,
+   puis l'écran lui-même, qui s'appuie sur tout ce qui précède.
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#151933">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>La guerre des neurones · Tablette</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lilita+One&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="tablette">
+    <header class="bandeau">
+      <div class="marque">La guerre des neurones<small>Jeu dis, Jeu fais ! · tablette</small></div>
+      <div class="code-salle" id="code-salle" aria-label="Code de la partie">····</div>
+      <div class="mini-joueurs" id="mini-joueurs" aria-label="Joueurs et scores"></div>
+      <div class="commandes" id="commandes"></div>
+    </header>
+    <main class="scene" id="scene">
+      <div class="intro"><h1>Mise en place de la table…</h1><p class="muet">Connexion au serveur de jeu.</p></div>
+    </main>
+  </div>
+  <div class="hors-ligne" id="hors-ligne" hidden>Connexion perdue… reconnexion en cours.</div>
+
+  <!-- Le générateur de QR code, fait maison : il fonctionne même sans Internet. -->
+  <script src="js/qrcode.js"></script>
+  <script src="js/connexion.js"></script>
+  <script src="js/commun.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/toile.js"></script>
+  <script src="js/musique.js"></script>
+  <script src="js/extraits.js"></script>
+  <script src="js/tablette.js"></script>
+</body>
+</html>

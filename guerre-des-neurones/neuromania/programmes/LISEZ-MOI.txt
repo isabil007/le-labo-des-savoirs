@@ -1,0 +1,16 @@
+NEURO'MANIA : LE DOSSIER DES PROGRAMMES
+=======================================
+
+Chaque programme a son propre dossier ici, avec au moins un fichier
+index.html. Par exemple :
+
+    programmes/mon-quiz/index.html
+
+Il s'ouvre alors à l'adresse :   (adresse du site)/programmes/mon-quiz/
+
+Pour qu'il apparaisse sur la page d'accueil, ajoutez-le dans le fichier
+catalogue.json (un dossier plus haut), dans le bon thème. Le plus
+simple : demandez à Claude, il s'occupe des deux.
+
+Les pages d'accueil déjà ouvertes se mettent à jour toutes seules :
+personne n'a besoin de les rafraîchir.

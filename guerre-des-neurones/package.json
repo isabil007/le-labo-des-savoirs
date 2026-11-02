@@ -1,0 +1,17 @@
+{
+  "name": "la-grande-tablee",
+  "version": "1.0.0",
+  "description": "Jeu intergénérationnel pour 4 à 12 joueurs : une tablette au centre, chacun joue avec son téléphone (iPhone ou Android).",
+  "main": "serveur.js",
+  "scripts": {
+    "start": "node serveur.js",
+    "test": "node tests/partie-complete.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "license": "MIT"
+}

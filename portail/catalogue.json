@@ -1,0 +1,38 @@
+{
+  "jeux": [
+    {
+      "id": "labo-des-savoirs",
+      "icone": "🧪",
+      "nom": "Le labo des savoirs",
+      "surtitre": "SEX'ACT · SEX'PLIQUE · IST'ORY & VIH'GILANCE",
+      "devise": "VIH & IST · Le jeu où la connaissance fait la différence !",
+      "public": "Étudiants infirmiers · Centre S",
+      "description": "Un écran pour la classe, un téléphone par élève : des défis sur le VIH et les IST, des corrigés complets et des anecdotes, pour apprendre en jouant ensemble.",
+      "couleur": "#8383F7",
+      "adresse": "https://le-labo-des-savoirs.onrender.com",
+      "sante": "/sante",
+      "entrees": [
+        { "texte": "Ouvrir l'écran de la classe", "chemin": "/", "principal": true, "aide": "À ouvrir sur l'ordinateur relié au projecteur." },
+        { "texte": "Rejoindre la partie", "chemin": "/jouer", "qr": true, "aide": "Les élèves scannent ce code : il mène toujours à la partie ouverte." },
+        { "texte": "Jouer seul ou à plusieurs sur un téléphone", "chemin": "/solo" }
+      ]
+    },
+    {
+      "id": "guerre-des-neurones",
+      "icone": "🧠",
+      "nom": "La guerre des neurones",
+      "surtitre": "Le jeu de toutes les générations",
+      "devise": "Jeu dis, Jeu fais !",
+      "public": "En famille · 1 à 12 joueurs · dès 7 ans",
+      "description": "Dix-huit mini-jeux tirés au sort : quiz, blind test, dessin, énigmes, puzzle, fous rires… Une tablette au centre de la table, et chacun joue avec son téléphone.",
+      "couleur": "#FFC93C",
+      "adresse": "https://la-guerre-des-neurones.onrender.com",
+      "sante": "/api/catalogue",
+      "entrees": [
+        { "texte": "Ouvrir la tablette", "chemin": "/tablette", "principal": true, "aide": "La tablette posée au centre de la table affiche le code de la partie." },
+        { "texte": "Rejoindre une partie", "chemin": "/jouer", "qr": true, "aide": "Chaque joueur scanne ce code, puis tape les 4 lettres affichées sur la tablette." },
+        { "texte": "Jouer seul", "chemin": "/solo", "qr": true, "aide": "Un seul téléphone, pas de tablette : scannez et jouez." }
+      ]
+    }
+  ]
+}
