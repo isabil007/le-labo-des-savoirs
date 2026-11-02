@@ -134,7 +134,7 @@
         choix: q.choix, nbRepondu: 0, nbJoueurs: this.ctx.joueurs().length
       }));
       // Les téléphones affichent seulement les touches de couleur : on regarde la tablette, pas son écran.
-      this.ctx.ecranTousJoueurs('qcm-choix', Object.assign({}, commun, { choix: q.choix, consigne: this.consigneJoueur(q) }));
+      this.ctx.ecranTousJoueurs('qcm-choix', Object.assign({}, commun, { choix: q.choix, consigne: this.consigneJoueur(q), intitule: this.vueTablette(q).intitule }));
       this.attendre(this.reglages.dureeMs + 300, () => this.reveler());
     }
 
@@ -199,7 +199,7 @@
       const q = this.questions[this.index];
       this.ctx.ecranJoueur(joueurId, 'qcm-choix', {
         numero: this.index + 1, total: this.questions.length, finA: this.finA, dureeMs: this.reglages.dureeMs,
-        choix: q.choix, consigne: this.consigneJoueur(q)
+        choix: q.choix, consigne: this.consigneJoueur(q), intitule: this.vueTablette(q).intitule
       });
     }
 

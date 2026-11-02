@@ -238,6 +238,8 @@
     return h('div', { class: 'ecran', style: { padding: 0 } },
       h('div', { class: 'qcm-tete' }, h('span', { class: 'etiquette' }, 'Question ' + d.numero + ' / ' + d.total), h('span', { class: 'muet' }, d.consigne)),
       GT.chrono(d.finA, d.dureeMs),
+      // L'énoncé est aussi sur le téléphone : on peut jouer à distance, sans voir l'écran de la classe.
+      d.intitule ? h('p', { class: 'enonce-tel' }, d.intitule) : null,
       touches);
   };
 
