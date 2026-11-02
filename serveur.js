@@ -34,6 +34,8 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 const Moteur = require('./moteur/moteur');
+// La porte : un code d'accès facultatif (ACCES_PRIVE = oui, CODE_ACCES = …), voir porte.js.
+const porte = require('./porte');
 
 const PORT = Number(process.env.PORT) || 3000;
 const RACINE = __dirname;
@@ -69,6 +71,7 @@ function adressePourTelephones(req) {
 }
 
 const serveur = http.createServer((req, res) => {
+  if (porte.filtrer(req, res, 'Le labo des savoirs')) return;
   const url = new URL(req.url, 'http://x');
   const chemin = decodeURIComponent(url.pathname);
 
@@ -124,6 +127,8 @@ let numero = 0;
 
 serveur.on('upgrade', (req, socket) => {
   if (new URL(req.url, 'http://x').pathname !== '/ligne' || String(req.headers.upgrade).toLowerCase() !== 'websocket') return socket.destroy();
+  // Jeu privé : sans le bon code (cookie), pas de ligne en direct non plus.
+  if (!porte.autorise(req)) { socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n'); return socket.destroy(); }
   const cle = req.headers['sec-websocket-key'];
   if (!cle) return socket.destroy();
   const accepte = crypto.createHash('sha1').update(cle + GUID).digest('base64');

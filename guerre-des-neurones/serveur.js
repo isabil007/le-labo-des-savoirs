@@ -41,6 +41,8 @@ const path = require('path');
 const { WebSocketServer } = require('ws');
 const Moteur = require('./moteur/moteur');
 const { annoncerNom } = require('./nom-local');
+// La porte : un code d'accès facultatif pour la version en ligne (ACCES_PRIVE = oui, CODE_ACCES = …), voir porte.js.
+const porte = require('./porte');
 
 // Le port : celui qu'on impose avec PORT=…, sinon 80 (adresse plus courte), et 3000 si le 80 est déjà pris.
 let PORT = Number(process.env.PORT) || 80;
@@ -156,6 +158,7 @@ function adressesLocales() {
 }
 
 const serveurHttp = http.createServer((req, res) => {
+  if (porte.filtrer(req, res, 'La guerre des neurones')) return;
   const url = new URL(req.url, 'http://x');
 
   // La tablette demande l'adresse à afficher pour inviter les joueurs.
@@ -217,7 +220,7 @@ const serveurHttp = http.createServer((req, res) => {
 
 /* ═══════════ 2. Les lignes ouvertes (WebSockets) ═══════════ */
 
-const wss = new WebSocketServer({ server: serveurHttp, path: '/ligne', maxPayload: 64 * 1024 });
+const wss = new WebSocketServer({ server: serveurHttp, path: '/ligne', maxPayload: 64 * 1024, verifyClient: (info) => porte.autorise(info.req) });
 // Le serveur WebSocket répète les erreurs du serveur web (par exemple « port déjà occupé »).
 // Sans cette oreille, Node s'arrêtait net au lieu d'essayer le port suivant : c'est ecouter() qui s'en charge.
 wss.on('error', () => {});

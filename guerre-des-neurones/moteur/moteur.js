@@ -387,13 +387,20 @@
      * côte à côte (on échange avec un jeu plus loin dans la liste).
      */
     espacerFamilles(liste) {
-      const l = outils.melanger(liste);
-      for (let i = 1; i < l.length; i++) {
-        if (FAMILLES[l[i]] !== FAMILLES[l[i - 1]]) continue;
-        const j = l.findIndex((id, k) => k > i && FAMILLES[id] !== FAMILLES[l[i - 1]] && (k + 1 >= l.length || FAMILLES[l[k + 1]] !== FAMILLES[l[i]]));
-        if (j > 0) [l[i], l[j]] = [l[j], l[i]];
+      // Plusieurs essais au hasard : on garde le premier sans voisins de même famille, sinon le meilleur.
+      const collees = (l) => l.reduce((n, id, i) => n + (i > 0 && FAMILLES[id] === FAMILLES[l[i - 1]] ? 1 : 0), 0);
+      let meilleur = null;
+      for (let essai = 0; essai < 40; essai++) {
+        const l = outils.melanger(liste);
+        for (let i = 1; i < l.length; i++) {
+          if (FAMILLES[l[i]] !== FAMILLES[l[i - 1]]) continue;
+          const j = l.findIndex((id, k) => k > i && FAMILLES[id] !== FAMILLES[l[i - 1]] && (k + 1 >= l.length || FAMILLES[l[k + 1]] !== FAMILLES[l[i]]));
+          if (j > 0) [l[i], l[j]] = [l[j], l[i]];
+        }
+        if (!meilleur || collees(l) < collees(meilleur)) meilleur = l;
+        if (collees(meilleur) === 0) break;
       }
-      return l;
+      return meilleur;
     }
 
     passer(salle) {
