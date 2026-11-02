@@ -75,7 +75,7 @@ const serveur = http.createServer((req, res) => {
   // Le QR code fixe, à imprimer une fois pour toutes : il mène à la partie ouverte le plus récemment.
   if (chemin === '/jouer') {
     const code = moteur.salleRecente();
-    res.writeHead(302, { Location: '/joueur.html' + (code ? '?code=' + code : ''), 'Cache-Control': 'no-store' });
+    res.writeHead(302, { Location: '/joueur.html' + (code ? '?code=' + code : '?aucune=1'), 'Cache-Control': 'no-store' });
     return res.end();
   }
   if (chemin === '/sante') { res.writeHead(200, { 'Content-Type': 'text/plain' }); return res.end('ok'); }

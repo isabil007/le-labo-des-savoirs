@@ -199,6 +199,10 @@
         h('span', { class: 'accroche' }, 'VIH & IST · Le jeu où la connaissance fait la différence !')),
       h('p', { class: 'muet' }, 'Rejoins la partie : le code est affiché sur l\'écran de la classe.'),
       message ? h('p', { class: 'bulle alerte', role: 'alert', style: { animation: 'none' } }, message) : null,
+      // Arrivé par le QR code fixe alors qu'aucune partie n'est ouverte.
+      !message && !etat.code && new URLSearchParams(location.search).has('aucune')
+        ? h('p', { class: 'bulle alerte', role: 'status', style: { animation: 'none' } }, 'Aucune partie n\'est ouverte pour l\'instant. L\'animateur ou l\'animatrice doit d\'abord ouvrir l\'écran de la classe : le code s\'y affiche. Rescanne ensuite le QR code.')
+        : null,
       h('div', { class: 'champ' }, h('label', { for: 'code' }, 'Code de la partie'),
         h('input', { id: 'code', name: 'code', maxlength: '4', autocomplete: 'off', autocapitalize: 'characters', inputmode: 'text', value: etat.code, placeholder: 'ABCD', required: true })),
       h('div', { class: 'champ' }, h('label', { for: 'nom' }, 'Ton prénom ou surnom'),
