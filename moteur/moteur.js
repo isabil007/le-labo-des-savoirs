@@ -100,13 +100,13 @@
   class Moteur {
     /*
      * options.envoyer(connexionId, evenement, donnees) : obligatoire, c'est le « facteur ».
-     * options.minJoueurs / maxJoueurs : 2 et 30 par défaut.
+     * options.minJoueurs / maxJoueurs : 2 et 100 par défaut (version compétition).
      * options.introMs : la durée de l'écran de présentation de chaque jeu.
      */
     constructor(options) {
       this.envoyer = options.envoyer;
       this.minJoueurs = options.minJoueurs || 2;
-      this.maxJoueurs = options.maxJoueurs || 30;
+      this.maxJoueurs = options.maxJoueurs || 100;
       this.introMs = options.introMs || 7000;
       // Mode solo : pas de défis (on joue contre soi-même) et on avance à son rythme, au bouton.
       this.manuel = !!options.manuel;
@@ -185,6 +185,7 @@
         if (salle.derniereActivite < limite) {
           if (salle.jeu) salle.jeu.arreter();
           clearTimeout(salle.minuteurIntro);
+          clearTimeout(salle.diffusionPrevue);
           this.salles.delete(code);
         }
       });
@@ -566,7 +567,15 @@
     }
 
     /* L'état de la salle (joueurs, scores, étape) est envoyé à tout le monde à chaque changement. */
+    /* L'état (joueurs et scores) part au plus une fois toutes les 150 ms : à 100 joueurs,
+       une révélation crédite 100 scores d'un coup, et on n'envoie qu'un seul état à jour. */
     diffuserEtat(salle) {
+      if (salle.diffusionPrevue) return;
+      salle.diffusionPrevue = setTimeout(() => { salle.diffusionPrevue = null; this.diffuserEtatMaintenant(salle); }, 150);
+      if (salle.diffusionPrevue.unref) salle.diffusionPrevue.unref();
+    }
+
+    diffuserEtatMaintenant(salle) {
       const etat = {
         code: salle.code, etat: salle.etat, minJoueurs: this.minJoueurs, maxJoueurs: this.maxJoueurs,
         joueurs: Array.from(salle.joueurs.values()).map((j) => ({ id: j.id, nom: j.nom, avatar: j.avatar, score: j.score, connecte: j.connecte })),

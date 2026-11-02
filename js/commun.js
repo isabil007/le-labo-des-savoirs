@@ -36,7 +36,8 @@
       if (demande) localStorage.setItem('depistage:palette', demande);
       else demande = localStorage.getItem('depistage:palette');
     } catch (e) { /* mémoire locale indisponible : tant pis */ }
-    if (demande === 'nuit') document.documentElement.dataset.palette = 'nuit';
+    // « labo » par défaut ; « centre-s » (claire) et « nuit » (d'origine) restent disponibles.
+    document.documentElement.dataset.palette = (demande === 'nuit' || demande === 'centre-s') ? demande : 'labo';
   })();
 
   GT.h = function (balise, attributs, ...enfants) {

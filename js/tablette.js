@@ -337,7 +337,8 @@
       h('div', { class: 'defis-reussis' }, h('strong', {}, '🎯 Défis réussis'), defis.length
         ? defis.map((x) => h('span', { class: 'gagnant' }, x.avatar + ' ' + x.nom, h('b', {}, '+' + x.prime)))
         : h('span', { class: 'muet' }, 'Aucun défi réussi cette fois-ci.')),
-      h('div', { class: 'palmares' }, lignesClassement(d.classement, true)),
+      h('div', { class: 'palmares' }, lignesClassement(d.classement.slice(0, 10), true)),
+      d.classement.length > 10 ? h('p', { class: 'muet', style: { textAlign: 'center' } }, '… et ' + (d.classement.length - 10) + ' autres joueurs : chacun voit son rang sur son téléphone.') : null,
       d.prochainFinale ? h('div', { class: 'bandeau-finale' }, '⚡ Prochain jeu : la Grande Finale, tout compte double. Tout peut encore basculer !') : null,
       h('div', { class: 'lancement' },
         h('button', { class: 'bouton', onclick: () => cnx.emit('tablette:passer') }, d.dernier ? 'Voir le podium 🏆' : (d.prochainFinale ? 'La Grande Finale : ' : 'Jeu suivant : ') + d.prochain.icone + ' ' + d.prochain.nom))
@@ -353,7 +354,7 @@
       h('span', { class: 'etiquette', style: { justifySelf: 'center' } }, premier && deuxieme && premier.score === deuxieme.score ? 'Égalité en tête !' : 'Victoire !'),
       h('h1', { style: { textAlign: 'center', fontSize: 'clamp(2.2rem, 4.6vw, 3.4rem)', color: 'var(--accent-fort)' } }, premier ? (premier.avatar + ' ' + premier.nom + (deuxieme && premier.score === deuxieme.score ? ' et ' + deuxieme.avatar + ' ' + deuxieme.nom + ', ex aequo !' : ' remporte la partie !')) : 'Le podium'),
       h('div', { class: 'marches' }, marche(deuxieme, '2'), marche(premier, '1'), marche(troisieme, '3')),
-      h('div', { class: 'palmares' }, lignesClassement(d.classement.slice(3).map((c) => c), false).map((ligne, i) => { ligne.querySelector('.place').textContent = GT.rang(i + 4); return ligne; })),
+      h('div', { class: 'palmares' }, lignesClassement(d.classement.slice(3, 12), false).map((ligne, i) => { ligne.querySelector('.place').textContent = GT.rang(i + 4); return ligne; })),
       h('div', { class: 'lancement', style: { justifyContent: 'center' } },
         (d.corrige && d.corrige.length) ? h('button', { class: 'bouton', onclick: () => afficher('corrige', d) }, '📝 Le corrigé de la partie') : null,
         h('button', { class: 'bouton bouton-discret', onclick: () => cnx.emit('tablette:nouvelle') }, 'Nouvelle partie'))

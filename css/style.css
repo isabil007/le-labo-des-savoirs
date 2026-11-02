@@ -80,6 +80,35 @@
 }
 
 * { box-sizing: border-box; }
+/* ─── Palette « labo » (par défaut depuis novembre 2026) : le graphisme des affiches ───
+ * Fond encre, halos aux couleurs de la charte Centre S, trame de labo et grain léger.
+ * Titres en Inter très gras, texte en Poppins. Pour revenir à la palette claire :
+ * ?palette=centre-s ; à la palette d'origine : ?palette=nuit. */
+:root[data-palette="labo"] {
+  --nappe: #16152B; --nappe-2: #201E3D; --nappe-3: #2D2B55; --trait: rgba(241, 237, 229, .14);
+  --papier: #F1EDE5; --brume: #B6B3D0;
+  --tournesol: #8383F7; --accent-fort: #8383F7; --sur-accent: #16152B;
+  --corail: #FF5D5D; --menthe: #83ACF7; --lilas: #E8A9CC; --orange: #FF8E4F;
+  --choix-a: #FF5D5D; --choix-b: #FF8E4F; --choix-c: #8383F7; --choix-d: #83ACF7;
+  --vert-texte: #9DBEFA; --rouge-texte: #FF8A8A;
+  --sur-couleur: #16152B; --sur-alerte: #16152B;
+  --carte: #F1EDE5; --sur-carte: #16152B;
+  --bandeau: rgba(22, 21, 43, .82); --voile: rgba(8, 7, 20, .6);
+  --halo: rgba(131, 131, 247, .55); --halo-chaud: rgba(255, 142, 79, .55);
+  --ombre: 0 24px 60px rgba(8, 7, 20, .45);
+  --ombre-bouton: #5050C8; --ombre-discret: #0E0D1F; --ombre-touche: rgba(0, 0, 0, .35);
+  --fond-image:
+    radial-gradient(38rem 38rem at 100% -6%, rgba(131, 131, 247, .55), transparent 62%),
+    radial-gradient(28rem 28rem at -8% 82%, rgba(232, 169, 204, .32), transparent 64%),
+    radial-gradient(26rem 26rem at 88% 108%, rgba(255, 142, 79, .38), transparent 62%),
+    radial-gradient(18rem 18rem at 102% 46%, rgba(131, 172, 247, .26), transparent 64%);
+  --police-titre: "Inter", "Inter Display", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --poids-titre: 900;
+  --police-texte: "Poppins", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --rayon: 22px;
+  color-scheme: dark;
+}
+
 html, body { height: 100%; }
 body {
   margin: 0;
@@ -539,3 +568,31 @@ body:has(.tablette) .decompte span { width: min(30vmin, 210px); font-size: min(1
 @keyframes gain-monte { 0% { opacity: 0; transform: translateY(6px); } 20% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes chip-pulse { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .score-gain, .score-chip.monte { animation: none; } }
+
+/* ─── Décor « labo » : trame, grain, titres serrés ─── */
+:root[data-palette="labo"] body { background-attachment: fixed; }
+:root[data-palette="labo"] body::before,
+:root[data-palette="labo"] body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+:root[data-palette="labo"] body::before {
+  background-image: linear-gradient(rgba(241, 237, 229, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(241, 237, 229, .05) 1px, transparent 1px);
+  background-size: 54px 54px; -webkit-mask-image: linear-gradient(180deg, #000, transparent 75%); mask-image: linear-gradient(180deg, #000, transparent 75%);
+}
+:root[data-palette="labo"] body::after {
+  opacity: .14; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-palette="labo"] h1, :root[data-palette="labo"] h2, :root[data-palette="labo"] .titre-jeu { letter-spacing: -.035em; line-height: 1; }
+:root[data-palette="labo"] .titre-jeu { background: linear-gradient(90deg, #F1EDE5 0 45%, #E8A9CC 70%, #FF8E4F); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-palette="labo"] .invitation .titre-jeu { background: linear-gradient(90deg, #16152B 0 40%, #8383F7 75%, #FF8E4F); -webkit-background-clip: text; background-clip: text; }
+:root[data-palette="labo"] .bouton { box-shadow: 0 10px 30px rgba(131, 131, 247, .35); }
+:root[data-palette="labo"] .bouton:active { transform: translateY(2px); }
+:root[data-palette="labo"] .sur-nom, :root[data-palette="labo"] .etiquette { letter-spacing: .22em; }
+:root[data-palette="labo"] .adresse, :root[data-palette="labo"] .reglages-wifi summary { color: #5B5BD6; }
+:root[data-palette="labo"] .score-rang { background: rgba(22, 21, 43, .35); color: inherit; }
+:root[data-palette="labo"] .score-chip.moi .score-gain { color: #16152B; }
+/* Contrastes « labo » sur les cartes crème */
+:root[data-palette="labo"] .explication strong,
+:root[data-palette="labo"] .correction-tel::before { color: #4B4BC8; }
+:root[data-palette="labo"] .carte-alea { color: var(--sur-carte); }
+:root[data-palette="labo"] .carte-alea p, :root[data-palette="labo"] .carte-alea span { color: #4A4868; }
+:root[data-palette="labo"] .invitation .accroche, :root[data-palette="labo"] .nom-jeu-centre .accroche { color: #5E5B7C; }
