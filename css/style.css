@@ -596,3 +596,50 @@ body:has(.tablette) .decompte span { width: min(30vmin, 210px); font-size: min(1
 :root[data-palette="labo"] .carte-alea { color: var(--sur-carte); }
 :root[data-palette="labo"] .carte-alea p, :root[data-palette="labo"] .carte-alea span { color: #4A4868; }
 :root[data-palette="labo"] .invitation .accroche, :root[data-palette="labo"] .nom-jeu-centre .accroche { color: #5E5B7C; }
+
+/* Fiches du corrigé : question de départ + bonne réponse, toujours visibles */
+.fiche-corrige { background: var(--carte); color: var(--sur-carte); border-radius: 16px; padding: 14px 16px 14px 22px; display: grid; gap: 6px; box-shadow: var(--ombre), inset 6px 0 0 #83ACF7; text-align: left; }
+.fiche-corrige.ratee, .fiche-corrige.a-revoir { box-shadow: var(--ombre), inset 6px 0 0 #FF5D5D; }
+.fiche-tete { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.fiche-tete small { color: #5E5B7C; font-size: .8rem; font-weight: 600; letter-spacing: .02em; }
+.fiche-tete .taux { flex: none; min-width: 3.6em; text-align: center; font-family: var(--police-titre); font-weight: var(--poids-titre); background: #83ACF7; color: #16152B; border-radius: 10px; padding: 3px 8px; font-variant-numeric: tabular-nums; }
+.fiche-corrige.a-revoir .taux { background: #FF5D5D; }
+.fiche-question { margin: 0; font-weight: 700; font-size: 1.05rem; line-height: 1.35; }
+.fiche-bonne { margin: 0; color: #3B3BB0; }
+.fiche-bonne strong { color: #2B2B9A; }
+.fiche-ta { margin: 0; color: #B42E2E; font-weight: 600; }
+.fiche-explication { margin: 0; color: #4A4868; font-size: .95rem; line-height: 1.45; }
+.carnet-section { margin: 14px 0 6px; font-size: 1rem; color: var(--brume); letter-spacing: .04em; }
+
+/* « Le saviez-vous ? » entre deux questions */
+.anecdote-ecran { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px 16px; text-align: center; }
+.anecdote-carte { position: relative; width: min(820px, 100%); display: grid; gap: 14px; justify-items: center; padding: clamp(24px, 4vw, 48px); border-radius: 32px;
+  background: linear-gradient(135deg, rgba(131, 131, 247, .22), rgba(232, 169, 204, .16) 55%, rgba(255, 142, 79, .18)); border: 1px solid rgba(241, 237, 229, .18);
+  box-shadow: 0 30px 80px rgba(8, 7, 20, .35); animation: anecdote-entree .7s cubic-bezier(.2, .8, .2, 1) both; }
+.anecdote-label { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: .95rem; letter-spacing: .22em; text-transform: uppercase; color: #E8A9CC; }
+.anecdote-annee { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: clamp(2.6rem, 7vw, 5rem); line-height: .95; letter-spacing: -.04em;
+  background: linear-gradient(90deg, #E8A9CC, #FF8E4F); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.anecdote-texte { margin: 0; font-size: clamp(1.1rem, 2.3vw, 1.7rem); line-height: 1.4; max-width: 34ch; text-wrap: balance; color: var(--papier); }
+:root:not([data-palette="labo"]) .anecdote-carte { background: var(--carte); color: var(--sur-carte); }
+:root:not([data-palette="labo"]) .anecdote-texte { color: var(--sur-carte); }
+@keyframes anecdote-entree { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .anecdote-carte { animation: none; } }
+
+/* Selfies */
+img.avatar-photo { width: 1.6em; height: 1.6em; border-radius: 50%; object-fit: cover; vertical-align: middle; display: inline-block; box-shadow: 0 0 0 2px rgba(241, 237, 229, .5); }
+.carte-joueur img.avatar-photo { width: 2.4rem; height: 2.4rem; }
+.marche img.avatar-photo { width: 4.2rem; height: 4.2rem; }
+.telephone .entete img.avatar-photo { width: 2.4rem; height: 2.4rem; }
+.gros-emoji img.avatar-photo { width: 7rem; height: 7rem; box-shadow: 0 0 0 4px #8383F7, 0 20px 50px rgba(131, 131, 247, .45); }
+.score-chip img.avatar-photo { width: 1.35em; height: 1.35em; box-shadow: none; }
+.selfie { display: grid; gap: 10px; justify-items: center; padding: 14px; border-radius: 18px; border: 1.5px dashed var(--trait); }
+.selfie img { width: 132px; height: 132px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px #8383F7; }
+.selfie .rangee { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.selfie .note-selfie { margin: 0; font-size: .8rem; color: var(--brume); text-align: center; }
+/* La pause */
+.voile-pause { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px; background: rgba(8, 7, 20, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.carte-pause { display: grid; gap: 12px; justify-items: center; text-align: center; width: min(460px, 100%); padding: 32px 24px; border-radius: 28px; background: var(--carte); color: var(--sur-carte); box-shadow: 0 30px 80px rgba(0, 0, 0, .45); }
+.carte-pause h2 { font-size: 2.4rem; }
+.carte-pause p { margin: 0; color: #4A4868; }
+.icone-pause { font-size: 3.2rem; line-height: 1; }
+.bouton-son { min-width: 46px; }

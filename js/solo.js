@@ -207,6 +207,12 @@
   }
 
   const ECRANS = {
+    anecdote: (d) => h('div', { class: 'anecdote-ecran' },
+      h('div', { class: 'anecdote-carte' },
+        h('span', { class: 'anecdote-label' }, '📜 Le saviez-vous ?'),
+        h('span', { class: 'anecdote-annee' }, d.annee),
+        h('p', { class: 'anecdote-texte' }, d.texte)),
+      bouton('Question suivante →', suivant)),
     intro: (d) => h('div', { class: 'centre' },
       d.finale ? h('div', { class: 'bandeau-finale' }, '⚡ Grande Finale · points ×2') : h('span', { class: 'etiquette' }, (d.fiche.id === 'tourbillon' ? 'Manche ' : 'Jeu ') + d.numero + ' sur ' + d.total),
       d.fiche.categorieNom ? h('span', { class: 'famille-pastille cat-' + d.fiche.categorie }, d.fiche.categorieNom) : null,
@@ -324,12 +330,17 @@
         const erreurs = p.erreurs || [];
         return h('details', { class: 'carnet-joueur', open: !plusieurs() },
           h('summary', {}, titre || (j.avatar + ' ' + j.nom + ' · ' + (p.nbQuestions - erreurs.length) + ' / ' + p.nbQuestions + ' bonnes réponses')),
-          h('div', { class: 'corrige' }, erreurs.length ? erreurs.map((e) => h('details', { class: 'ligne-corrige' },
-            h('summary', {}, h('span', { class: 'q' }, e.question)),
-            h('div', { class: 'reponse-corrige' },
-              e.taReponse ? h('p', { class: 'ta-reponse' }, '✗ Réponse donnée : ' + e.taReponse) : h('p', { class: 'ta-reponse' }, '⏱ Pas de réponse'),
-              h('strong', {}, '✓ ' + e.bonne),
-              e.correction ? h('p', {}, e.correction) : null))) : h('p', { class: 'muet' }, 'Aucune erreur : bravo !')));
+          (() => {
+            const parQuestion = new Map(erreurs.map((e) => [e.question, e]));
+            const liste = (p.questions && p.questions.length) ? p.questions : erreurs;
+            const ratees = liste.filter((q) => parQuestion.has(q.question));
+            const reussies = liste.filter((q) => !parQuestion.has(q.question));
+            return h('div', { class: 'corrige' },
+              ratees.length ? h('h4', { class: 'carnet-section' }, 'À retenir (' + ratees.length + ')') : h('p', { class: 'muet' }, 'Aucune erreur : bravo !'),
+              ratees.map((q) => GT.ficheCorrige(q, { rate: true, taReponse: parQuestion.get(q.question).taReponse })),
+              reussies.length ? h('h4', { class: 'carnet-section' }, 'Réussies (' + reussies.length + ')') : null,
+              reussies.map((q) => GT.ficheCorrige(q)));
+          })());
       };
 
       if (plusieurs()) {

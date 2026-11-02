@@ -34,7 +34,7 @@
       this.vitesse = !(ctx && ctx.sansVitesse);
       this.revelationMs = 12000;
       // Chaque séquence : les étapes mélangées, et pour chacune son rang dans le bon ordre.
-      this.sequences = outils.tirer(reglages.banque, 4).map((s) => {
+      this.sequences = outils.tirerFrais(reglages.banque, 4).map((s) => {
         let melange;
         do { melange = outils.melanger(s.etapes.map((texte, rang) => ({ texte, rang }))); }
         while (melange.every((e, i) => e.rang === i)); // jamais déjà dans l'ordre !
@@ -58,6 +58,7 @@
     suivante() {
       this.index++;
       if (this.index >= this.sequences.length) return this.ctx.terminer();
+      outils.marquerVue({ consigne: this.sequences[this.index].consigne });
       this.phase = 'question';
       this.reponses = new Map(); // joueurId → { ordre, restantMs }
       this.finA = Date.now() + this.dureeMs;

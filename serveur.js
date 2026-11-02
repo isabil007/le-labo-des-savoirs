@@ -78,6 +78,14 @@ const serveur = http.createServer((req, res) => {
     res.writeHead(302, { Location: '/joueur.html' + (code ? '?code=' + code : '?aucune=1'), 'Cache-Control': 'no-store' });
     return res.end();
   }
+  // Les selfies des joueurs : /photo/CODE/IDENTIFIANT
+  const mPhoto = /^\/photo\/([A-Za-z]{4})\/([A-Za-z0-9-]{3,40})$/.exec(chemin);
+  if (mPhoto) {
+    const image = moteur.photo(mPhoto[1], mPhoto[2]);
+    if (!image) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Pas de photo.'); }
+    res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'private, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
+    return res.end(image);
+  }
   if (chemin === '/sante') { res.writeHead(200, { 'Content-Type': 'text/plain' }); return res.end('ok'); }
 
   if (chemin === '/api/adresse') {

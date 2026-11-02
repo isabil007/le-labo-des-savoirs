@@ -117,5 +117,31 @@
     return String(texte || '').replace(/[<>]/g, '').trim().slice(0, longueurMax || 40);
   }
 
-  return { melanger, tirer, entier, codeSalle, identifiant, normaliser, distance, nettoyer };
+  /*
+   * La mémoire des questions déjà posées : pour ne pas retomber sur les mêmes
+   * questions quand on enchaîne les parties. On note l'heure à laquelle chaque
+   * question a été posée, et l'on tire d'abord celles qui n'ont jamais servi
+   * (puis les plus anciennes). Sur le serveur, la mémoire vaut pour toutes les
+   * salles ; dans le navigateur (mode solo), elle est gardée sur l'appareil.
+   */
+  const vues = new Map();
+  const CLE_MEMOIRE = 'labo:questions-vues';
+  const stockage = (function () { try { return typeof window !== 'undefined' && window.localStorage ? window.localStorage : null; } catch (e) { return null; } })();
+  try { if (stockage) JSON.parse(stockage.getItem(CLE_MEMOIRE) || '[]').forEach(([k, t]) => vues.set(k, t)); } catch (e) { /* mémoire illisible : on repart de zéro */ }
+  function cle(x) {
+    if (!x) return '';
+    if (x._cle) return x._cle;
+    return String(x.question || x.texte || x.consigne || x.situation || x.carte || JSON.stringify(x)).slice(0, 160);
+  }
+  function tirerFrais(liste, n) {
+    return melanger(liste).sort((a, b) => (vues.get(cle(a)) || 0) - (vues.get(cle(b)) || 0)).slice(0, Math.min(n, liste.length));
+  }
+  function marquerVue(x) {
+    vues.set(cle(x), Date.now());
+    if (vues.size > 1500) { const plusVieille = [...vues.entries()].sort((a, b) => a[1] - b[1])[0]; vues.delete(plusVieille[0]); }
+    try { if (stockage) stockage.setItem(CLE_MEMOIRE, JSON.stringify([...vues.entries()].slice(-800))); } catch (e) { /* tant pis */ }
+  }
+  function ancienneteVue(x) { return vues.get(cle(x)) || 0; }
+
+  return { melanger, tirer, tirerFrais, marquerVue, ancienneteVue, cle, entier, codeSalle, identifiant, normaliser, distance, nettoyer };
 });

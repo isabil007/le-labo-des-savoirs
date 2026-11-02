@@ -69,8 +69,8 @@
    */
   // L'ordre suit une séance : on s'échauffe (idées reçues), on comprend, on remonte le temps, on agit.
   const CATEGORIES = [
-    { id: 'vihgilance', nom: 'VIH’GILANCE', sous: 'Rester vigilant : idées reçues et chiffres', jeux: ['thermometre', 'vrai-faux', 'chiffres'] },
-    { id: 'sexplique', nom: 'SEX’PLIQUE', sous: 'Comprendre : le savoir théorique', jeux: ['vih', 'bacteries', 'hepatites', 'hpv', 'marche', 'ordre'] },
+    { id: 'vihgilance', nom: 'VIH’GILANCE', sous: 'Rester vigilant : idées reçues et chiffres', jeux: ['thermometre', 'vrai-faux', 'chiffres', 'prevention'] },
+    { id: 'sexplique', nom: 'SEX’PLIQUE', sous: 'Comprendre : le savoir théorique', jeux: ['vih', 'bacteries', 'hepatites', 'hpv', 'meconnues', 'marche', 'ordre'] },
     { id: 'istory', nom: 'IST’ORY', sous: 'Raconter : l\'histoire des IST', jeux: ['histoire', 'frise'] },
     { id: 'sexact', nom: 'SEX’ACT', sous: 'Agir : la pratique professionnelle', jeux: ['risque', 'consultation', 'feu', 'orientation', 'betisier'] },
     { id: 'alea', nom: 'ALÉATOIRE 🎲', sous: 'Toutes les familles mélangées, question après question', jeux: ['tourbillon'] }
@@ -138,6 +138,7 @@
           switch (evenement) {
             case 'tablette:lancer': return this.lancerPartie(salle, d.programme, cid);
             case 'tablette:passer': return this.passer(salle);
+            case 'tablette:pause': return this.basculerPause(salle);
             case 'tablette:terminer-jeu': return salle.jeu && this.finJeu(salle);
             case 'tablette:podium': return this.podium(salle);
             case 'tablette:nouvelle': return this.nouvellePartie(salle);
@@ -146,6 +147,7 @@
         } else if (cnx.role === 'joueur') {
           switch (evenement) {
             case 'joueur:action':
+              if (salle.pause) return; // pendant la pause, on ne répond pas
               if (salle.etat === 'jeu' && salle.jeu) salle.jeu.action(cnx.joueurId, d);
               return;
             case 'joueur:reaction': return this.reaction(salle, cnx.joueurId, d);
@@ -245,7 +247,35 @@
       this.jeuSuivant(salle);
     }
 
+    /*
+     * La pause : quelqu'un ne comprend pas ? L'animateur fige tout (chronos et
+     * minuteurs), explique, puis reprend : chacun retrouve le temps qui lui restait.
+     */
+    basculerPause(salle) {
+      if (salle.etat !== 'jeu' || !salle.jeu) return;
+      const tous = (type, donnees) => {
+        if (salle.tabletteId) this.envoyer(salle.tabletteId, 'evenement', { type, donnees });
+        salle.joueurs.forEach((j) => { if (j.connecte) this.envoyer(j.connexionId, 'evenement', { type, donnees }); });
+      };
+      if (!salle.pause) {
+        salle.jeu.pause();
+        salle.pause = Date.now();
+        tous('pause', { enPause: true });
+      } else {
+        const duree = salle.jeu.reprendre();
+        salle.pause = null;
+        // Les écrans déjà affichés repartent avec leur compte à rebours décalé de la durée de la pause.
+        const decaler = (e) => { if (e && e.donnees && typeof e.donnees.finA === 'number') e.donnees = Object.assign({}, e.donnees, { finA: e.donnees.finA + duree }); };
+        decaler(salle.dernierEcranTablette);
+        tous('pause', { enPause: false });
+        if (salle.dernierEcranTablette && salle.tabletteId) this.envoyer(salle.tabletteId, 'ecran', Object.assign({ horloge: Date.now() }, salle.dernierEcranTablette));
+        salle.joueurs.forEach((j) => { decaler(j.dernierEcran); if (j.connecte && j.dernierEcran) this.envoyer(j.connexionId, 'ecran', Object.assign({ horloge: Date.now() }, j.dernierEcran)); });
+      }
+      this.diffuserEtat(salle);
+    }
+
     passer(salle) {
+      if (salle.pause) this.basculerPause(salle);
       if (salle.etat === 'intro') this.demarrerJeu(salle);
       else if (salle.etat === 'jeu' && salle.jeu) salle.jeu.passer();
       else if (salle.etat === 'classement') this.jeuSuivant(salle);
@@ -289,8 +319,9 @@
         if (j.connecte && j.connexionId !== cid) this.connexions.delete(j.connexionId);
         j.connexionId = cid;
         j.connecte = true;
+        if (d.photo) this.enregistrerPhoto(j, d.photo);
         this.connexions.set(cid, { role: 'joueur', code, joueurId: j.id });
-        this.envoyer(cid, 'joueur:accepte', { joueurId: j.id, code, nom: j.nom, avatar: j.avatar });
+        this.envoyer(cid, 'joueur:accepte', { joueurId: j.id, code, nom: j.nom, avatar: j.avatar, photo: j.photoV || 0 });
         this.diffuserEtat(salle);
         this.replacerJoueur(salle, j);
         return;
@@ -315,11 +346,30 @@
         score: 0, connecte: true, connexionId: cid, dernierEcran: null, derniereReaction: 0,
         erreurs: [], defi: null
       };
+      this.enregistrerPhoto(j, d.photo);
       salle.joueurs.set(j.id, j);
       this.connexions.set(cid, { role: 'joueur', code, joueurId: j.id });
-      this.envoyer(cid, 'joueur:accepte', { joueurId: j.id, code, nom: j.nom, avatar: j.avatar });
+      this.envoyer(cid, 'joueur:accepte', { joueurId: j.id, code, nom: j.nom, avatar: j.avatar, photo: j.photoV || 0 });
       this.diffuserEtat(salle);
       this.replacerJoueur(salle, j);
+    }
+
+    /*
+     * Le selfie (facultatif) : une petite image JPEG déjà déformée sur le
+     * téléphone. On n'accepte que ce format, pas plus de 40 Ko. Elle reste
+     * en mémoire avec la salle (jamais écrite sur disque) et disparaît avec elle.
+     */
+    enregistrerPhoto(j, photo) {
+      if (typeof photo !== 'string' || !/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(photo) || photo.length > 40000) return;
+      j.photo = photo;
+      j.photoV = (j.photoV || 0) + 1;
+    }
+
+    /* Le serveur sert les selfies séparément (une adresse par joueur), pour ne pas alourdir les messages. */
+    photo(code, joueurId) {
+      const salle = this.salles.get(String(code || '').toUpperCase());
+      const j = salle && salle.joueurs.get(joueurId);
+      return j && j.photo ? Buffer.from(j.photo.split(',')[1], 'base64') : null;
     }
 
     /* Montrer au joueur l'écran qui correspond à ce qui se passe à la table. */
@@ -390,7 +440,7 @@
 
     classement(salle) {
       return Array.from(salle.joueurs.values())
-        .map((j) => ({ id: j.id, nom: j.nom, avatar: j.avatar, score: j.score, gain: j.score - (j.scoreAvant || 0), connecte: j.connecte }))
+        .map((j) => ({ id: j.id, nom: j.nom, avatar: j.avatar, photo: j.photoV || 0, score: j.score, gain: j.score - (j.scoreAvant || 0), connecte: j.connecte }))
         .sort((a, b) => b.score - a.score);
     }
 
@@ -484,6 +534,7 @@
 
     podium(salle) {
       this.arreterJeu(salle);
+      salle.pause = null;
       salle.etat = 'podium';
       salle.finale = false;
       const classement = this.classement(salle);
@@ -492,7 +543,7 @@
       this.ecranTablette(salle, 'podium', { classement, corrige });
       classement.forEach((c, rang) => {
         const j = salle.joueurs.get(c.id);
-        this.ecranJoueur(salle, c.id, 'podium', { rang: rang + 1, score: c.score, nbJoueurs: classement.length, erreurs: (j && j.erreurs) || [], nbQuestions: salle.journal.length });
+        this.ecranJoueur(salle, c.id, 'podium', { rang: rang + 1, score: c.score, nbJoueurs: classement.length, erreurs: (j && j.erreurs) || [], nbQuestions: salle.journal.length, questions: salle.journal.map((x) => ({ question: x.question, bonne: x.bonne, correction: x.correction, jeu: x.jeu, icone: x.icone })) });
       });
       this.diffuserEtat(salle);
     }
@@ -578,7 +629,8 @@
     diffuserEtatMaintenant(salle) {
       const etat = {
         code: salle.code, etat: salle.etat, minJoueurs: this.minJoueurs, maxJoueurs: this.maxJoueurs,
-        joueurs: Array.from(salle.joueurs.values()).map((j) => ({ id: j.id, nom: j.nom, avatar: j.avatar, score: j.score, connecte: j.connecte })),
+        joueurs: Array.from(salle.joueurs.values()).map((j) => ({ id: j.id, nom: j.nom, avatar: j.avatar, photo: j.photoV || 0, score: j.score, connecte: j.connecte })),
+        pause: !!salle.pause,
         programme: salle.programme, index: salle.index
       };
       if (salle.tabletteId) this.envoyer(salle.tabletteId, 'salle:etat', etat);

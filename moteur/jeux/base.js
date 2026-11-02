@@ -45,31 +45,54 @@
 })(this, 'jeux/base', function (exiger) {
   'use strict';
   const outils = exiger('../outils');
+  const S = exiger('../contenus/supplement'); // les anecdotes « Le saviez-vous ? »
 
   class Jeu {
     constructor(ctx) {
       this.ctx = ctx;
-      this.minuteurs = new Set(); // tous les réveils programmés par ce jeu
+      this.minuteurs = new Map(); // tous les réveils programmés par ce jeu : minuteur → { fin, tache }
       this.actif = true;          // passe à « faux » dès que le jeu est arrêté
+      this.enPause = null;        // l'heure de la mise en pause, s'il y en a une
     }
 
     /*
      * « Dans tant de millisecondes, fais ceci. » On garde une trace de
-     * chaque réveil pour pouvoir tous les annuler d'un coup. Et si le jeu
-     * a été arrêté entre-temps, la tâche n'est tout simplement pas faite.
+     * chaque réveil pour pouvoir tous les annuler d'un coup… ou les
+     * suspendre pendant une pause. Et si le jeu a été arrêté entre-temps,
+     * la tâche n'est tout simplement pas faite.
      */
     attendre(ms, tache) {
       const minuteur = setTimeout(() => {
         this.minuteurs.delete(minuteur);
         if (this.actif) tache();
       }, ms);
-      this.minuteurs.add(minuteur);
+      this.minuteurs.set(minuteur, { fin: Date.now() + ms, tache });
       return minuteur;
     }
 
     annulerMinuteurs() {
-      this.minuteurs.forEach(clearTimeout);
+      this.minuteurs.forEach((_, m) => clearTimeout(m));
       this.minuteurs.clear();
+    }
+
+    /* La pause : on fige les réveils en notant le temps qui restait à chacun. */
+    pause() {
+      if (this.enPause) return;
+      this.enPause = Date.now();
+      this.suspendus = [];
+      this.minuteurs.forEach((m, id) => { clearTimeout(id); this.suspendus.push({ reste: Math.max(0, m.fin - this.enPause), tache: m.tache }); });
+      this.minuteurs.clear();
+    }
+
+    /* La reprise : chaque réveil repart avec son temps restant ; le compte à rebours est décalé d'autant. */
+    reprendre() {
+      if (!this.enPause) return 0;
+      const duree = Date.now() - this.enPause;
+      this.enPause = null;
+      if (typeof this.finA === 'number') this.finA += duree;
+      (this.suspendus || []).forEach((s) => this.attendre(s.reste, s.tache));
+      this.suspendus = [];
+      return duree;
     }
 
     /* Le moteur appelle « arreter » quand on quitte le jeu, quelle qu'en soit la raison. */
@@ -120,9 +143,12 @@
     demarrer() { this.questionSuivante(); }
 
     questionSuivante() {
+      // « Le saviez-vous ? » : une fois par jeu, au milieu, une courte note historique.
+      if (this.anecdotePrevue()) return this.raconter();
       this.index++;
       if (this.index >= this.questions.length) return this.ctx.terminer();
       const q = this.questions[this.index];
+      outils.marquerVue(q); // pour ne pas la reposer à la prochaine partie
       this.phase = 'question';
       this.reponses = new Map(); // joueurId → { choix, restantMs }
       this.debut = Date.now();
@@ -176,7 +202,7 @@
         if (!juste) this.ctx.noterErreur(j.id, { question: this.intituleCorrige(q), bonne: q.choix[q.bonne], taReponse: r ? q.choix[r.choix] : null, correction: ex.texte });
         this.ctx.ecranJoueur(j.id, 'qcm-resultat', {
           juste: !!juste, neutre: !!neutre, aRepondu: !!r, points, bonne: q.bonne, bonneTexte: q.choix[q.bonne], score: j.score,
-          correction: ex.texte
+          correction: ex.texte, question: this.vueTablette(q).intitule, taReponse: r ? q.choix[r.choix] : null
         });
       });
 
@@ -201,6 +227,25 @@
         numero: this.index + 1, total: this.questions.length, finA: this.finA, dureeMs: this.reglages.dureeMs,
         choix: q.choix, consigne: this.consigneJoueur(q), intitule: this.vueTablette(q).intitule
       });
+    }
+
+    anecdotePrevue() {
+      const prochain = this.index + 1;
+      const fiche = this.constructor.fiche || {};
+      return !this.anecdoteFaite && S && S.anecdotes && S.anecdotes.length && this.questions.length >= 5 &&
+        prochain === Math.floor(this.questions.length / 2) && fiche.id !== 'histoire';
+    }
+
+    raconter() {
+      this.anecdoteFaite = true;
+      this.phase = 'anecdote';
+      const a = outils.tirerFrais(S.anecdotes, 1)[0];
+      outils.marquerVue(a);
+      const dureeMs = this.reglages.anecdoteMs || 10000;
+      const d = { annee: a.annee, texte: a.texte, finA: Date.now() + dureeMs, dureeMs };
+      this.ctx.ecranTablette('anecdote', d);
+      this.ctx.ecranTousJoueurs('anecdote', d);
+      if (!this.ctx.manuel) this.attendre(dureeMs, () => this.questionSuivante());
     }
 
     /* « Passer » : pendant la question on révèle tout de suite ; pendant la révélation, on enchaîne. */

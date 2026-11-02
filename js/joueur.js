@@ -32,6 +32,8 @@
     code: (parametres.get('code') || GT.memoire.lire('joueur-code') || '').toUpperCase(),
     nom: GT.memoire.lire('joueur-nom') || '',
     avatar: GT.memoire.lire('joueur-avatar') || AVATARS[Math.floor(Math.random() * AVATARS.length)],
+    photo: 0,          // version du selfie côté serveur (0 : pas de selfie)
+    photoData: null,   // le selfie déformé, prêt à envoyer
     accepte: false,
     salle: null,
     ecran: null
@@ -52,7 +54,7 @@
   cnx.on('fermee', () => { document.getElementById('hors-ligne').hidden = false; });
 
   cnx.on('joueur:accepte', (d) => {
-    Object.assign(etat, { accepte: true, joueurId: d.joueurId, code: d.code, nom: d.nom, avatar: d.avatar });
+    Object.assign(etat, { accepte: true, joueurId: d.joueurId, code: d.code, nom: d.nom, avatar: d.avatar, photo: d.photo || 0 });
     GT.memoire.ecrire('joueur-id', d.joueurId);
     GT.memoire.ecrire('joueur-code', d.code);
     GT.memoire.ecrire('joueur-nom', d.nom);
@@ -103,8 +105,9 @@
     const m = moi();
     entete.hidden = false;
     entete.replaceChildren(
-      h('span', { class: 'avatar', 'aria-hidden': 'true' }, etat.avatar),
+      GT.avatarEl({ id: etat.joueurId, avatar: etat.avatar, photo: etat.photo }, etat.code),
       h('div', { class: 'qui' }, h('strong', {}, etat.nom), h('span', {}, GT.points(m ? m.score : 0) + ' · salle ' + etat.code)),
+      h('button', { class: 'bouton-reagir', 'aria-label': GT.son.actif ? 'Couper le son' : 'Activer le son', onclick: (ev) => { ev.currentTarget.textContent = GT.son.basculer() ? '🔊' : '🔇'; } }, GT.son.actif ? '🔊' : '🔇'),
       h('button', { class: 'bouton-reagir', 'aria-label': 'Envoyer une réaction', onclick: () => ouvrirReactions(null) }, '💬'),
       scoresEnDirect()
     );
@@ -130,7 +133,7 @@
       const rang = tous.filter((x) => x.score > j.score).length + 1;
       return h('li', { class: 'score-chip' + (j.id === etat.joueurId ? ' moi' : '') + (gain ? ' monte' : '') + (j.connecte ? '' : ' absent') },
         h('span', { class: 'score-rang' }, rang === 1 ? '👑' : String(rang)),
-        h('span', { 'aria-hidden': 'true' }, j.avatar),
+        GT.avatarEl(j, etat.code),
         h('span', { class: 'score-nom' }, j.id === etat.joueurId ? 'Toi' : j.nom),
         h('strong', {}, GT.points(j.score).replace(/\s*pts?$/, '')),
         gain ? h('span', { class: 'score-gain' }, '+' + gain) : null);
@@ -181,6 +184,36 @@
 
   /* ═══════════ Le formulaire pour rejoindre ═══════════ */
 
+  /*
+   * Le selfie rigolo (facultatif) : en plus de l'émoji, chacun peut prendre
+   * une photo de son visage, déformée au hasard. « Autre effet » relance le
+   * hasard ; la photo ne sert que pendant la partie.
+   */
+  let imageSelfie = null;
+  function blocSelfie() {
+    const zone = h('div', { class: 'selfie' });
+    const dessiner = () => {
+      if (!etat.photoData) {
+        zone.replaceChildren(
+          h('button', { type: 'button', class: 'bouton bouton-petit bouton-discret', onclick: prendre }, '🤳 Ajouter un selfie rigolo (facultatif)'),
+          h('p', { class: 'note-selfie' }, 'Ton visage, déformé au hasard. La photo ne sert que pendant la partie, puis elle est effacée.'));
+        return;
+      }
+      zone.replaceChildren(
+        h('img', { src: etat.photoData, alt: 'Ton selfie rigolo' }),
+        h('div', { class: 'rangee' },
+          h('button', { type: 'button', class: 'bouton bouton-petit', onclick: () => { etat.photoData = GT.selfie.rigolo(imageSelfie).url; dessiner(); } }, '🎲 Autre effet'),
+          h('button', { type: 'button', class: 'bouton bouton-petit bouton-discret', onclick: prendre }, '📷 Reprendre'),
+          h('button', { type: 'button', class: 'bouton bouton-petit bouton-discret', onclick: () => { etat.photoData = null; imageSelfie = null; dessiner(); } }, '✕ Sans photo')));
+    };
+    const prendre = () => GT.selfie.prendre()
+      .then((img) => { imageSelfie = img; etat.photoData = GT.selfie.rigolo(img).url; dessiner(); })
+      .catch(() => {});
+    if (!GT.selfie) return null;
+    dessiner();
+    return zone;
+  }
+
   function afficherFormulaire(message) {
     etat.ecran = { type: 'formulaire' };
     entete.hidden = true;
@@ -208,6 +241,7 @@
       h('div', { class: 'champ' }, h('label', { for: 'nom' }, 'Ton prénom ou surnom'),
         h('input', { id: 'nom', name: 'nom', maxlength: '16', autocomplete: 'given-name', value: etat.nom, placeholder: 'Prénom ou surnom', required: true })),
       h('div', { class: 'champ' }, h('span', { style: { fontWeight: 700 } }, 'Ton avatar'), grille),
+      blocSelfie(),
       h('button', { class: 'bouton', type: 'submit' }, 'Rejoindre la partie')
     );
     formulaire.addEventListener('submit', (ev) => {
@@ -219,7 +253,7 @@
       etat.code = code;
       etat.nom = nom;
       etat.avatar = avatar;
-      cnx.emit('joueur:rejoindre', { code, nom, avatar });
+      cnx.emit('joueur:rejoindre', { code, nom, avatar, photo: etat.photoData || undefined });
     });
     ecran.replaceChildren(formulaire);
   }
@@ -231,7 +265,7 @@
   ECRANS.salon = function () {
     const autres = etat.salle ? etat.salle.joueurs.filter((j) => j.id !== etat.joueurId) : [];
     return h('div', { class: 'centre' },
-      h('div', { class: 'gros-emoji', 'aria-hidden': 'true' }, etat.avatar),
+      h('div', { class: 'gros-emoji', 'aria-hidden': 'true' }, etat.photo ? GT.avatarEl({ id: etat.joueurId, avatar: etat.avatar, photo: etat.photo }, etat.code) : etat.avatar),
       h('h2', {}, 'Tu es dans la partie, ' + etat.nom + ' !'),
       h('p', { class: 'muet' }, 'Garde un œil sur la tablette : la formatrice va lancer la partie.'),
       autres.length ? h('p', {}, 'Touche un joueur pour lui envoyer un petit mot :') : null,
@@ -250,6 +284,15 @@
       d.defi ? h('div', { class: 'carte-defi' },
         h('span', { class: 'etiquette-defi' }, 'Ton défi · prime +' + d.prime),
         h('strong', {}, d.defi.texte)) : null);
+  };
+
+  ECRANS.anecdote = function (d) {
+    return h('div', { class: 'anecdote-ecran' },
+      h('div', { class: 'anecdote-carte' },
+        h('span', { class: 'anecdote-label' }, '📜 Le saviez-vous ?'),
+        h('span', { class: 'anecdote-annee' }, d.annee),
+        h('p', { class: 'anecdote-texte' }, d.texte)),
+      h('p', { class: 'muet' }, 'La question suivante arrive…'));
   };
 
   ECRANS.info = function (d) {
@@ -290,8 +333,8 @@
     return h('div', { class: 'centre' },
       h('div', { class: 'verdict ' + (d.juste ? 'verdict-juste' : d.neutre ? 'verdict-neutre' : 'verdict-faux'), 'aria-hidden': 'true' }, d.juste ? '✓' : d.neutre ? '?' : d.aRepondu ? '✗' : '⏱'),
       h('h2', {}, d.juste ? 'Bravo ! +' + d.points : d.neutre ? 'Honnête !' + (d.points ? ' +' + d.points : '') : d.aRepondu ? 'Raté !' : 'Trop tard !'),
-      d.juste ? null : h('p', {}, 'La bonne réponse : ', h('strong', {}, d.bonneTexte)),
-      (!d.juste && d.correction) ? h('p', { class: 'correction-tel' }, d.correction) : null,
+      // La fiche mémo : la question de départ, la bonne réponse et l'explication.
+      GT.ficheCorrige({ question: d.question || '', bonne: d.bonneTexte, correction: d.correction }, { rate: !d.juste && !d.neutre, taReponse: d.taReponse }),
       h('p', { class: 'muet' }, 'Ton score : ' + GT.points(d.score)));
   };
 
@@ -338,7 +381,7 @@
       h('div', { class: 'verdict ' + (d.parfait ? 'verdict-juste' : 'verdict-faux'), 'aria-hidden': 'true' }, d.parfait ? '✓' : d.aRepondu ? d.bienPlaces + '/' + d.n : '⏱'),
       h('h2', {}, d.parfait ? 'Sans faute ! +' + d.points : d.aRepondu ? d.bienPlaces + ' étape' + (d.bienPlaces > 1 ? 's' : '') + ' bien placée' + (d.bienPlaces > 1 ? 's' : '') + (d.points ? ' · +' + d.points : '') : 'Trop tard !'),
       d.parfait ? null : h('ol', { class: 'liste-ordre' }, d.solution.map((t) => h('li', {}, t))),
-      (!d.parfait && d.correction) ? h('p', { class: 'correction-tel' }, d.correction) : null,
+      d.correction ? h('p', { class: 'correction-tel' }, d.correction) : null,
       h('p', { class: 'muet' }, 'Ton score : ' + GT.points(d.score)));
   };
 
@@ -368,20 +411,29 @@
         h('div', { class: 'gros-emoji', 'aria-hidden': 'true', style: { fontSize: '4.5rem' } }, medaille),
         h('h2', {}, d.rang === 1 ? 'Première place !' : GT.rang(d.rang) + ' sur ' + d.nbJoueurs),
         h('p', {}, GT.points(d.score) + (d.nbQuestions ? ' · ' + (d.nbQuestions - erreurs.length) + ' / ' + d.nbQuestions + ' bonnes réponses' : ''))),
-      h('h3', { class: 'titre-carnet' }, erreurs.length ? '📝 Tes corrections (' + erreurs.length + ')' : '📝 Aucune erreur : bravo !'),
-      h('div', { class: 'corrige' }, erreurs.map((e) => h('details', { class: 'ligne-corrige' },
-        h('summary', {}, h('span', { class: 'q' }, e.question)),
-        h('div', { class: 'reponse-corrige' },
-          e.taReponse ? h('p', { class: 'ta-reponse' }, '✗ Ta réponse : ' + e.taReponse) : h('p', { class: 'ta-reponse' }, '⏱ Pas de réponse'),
-          h('strong', {}, '✓ ' + e.bonne),
-          e.correction ? h('p', {}, e.correction) : null)))));
+      h('h3', { class: 'titre-carnet' }, '📝 Ton carnet : toutes les questions'),
+      carnetComplet(d.questions || [], erreurs));
   };
+
+  /* Le carnet : chaque question de la partie, ratées en rouge avec la réponse donnée. */
+  function carnetComplet(questions, erreurs) {
+    const parQuestion = new Map(erreurs.map((e) => [e.question, e]));
+    const liste = questions.length ? questions : erreurs;
+    const ratees = liste.filter((q) => parQuestion.has(q.question));
+    const reussies = liste.filter((q) => !parQuestion.has(q.question));
+    return h('div', { class: 'corrige' },
+      ratees.length ? h('h4', { class: 'carnet-section' }, 'À retenir (' + ratees.length + ')') : null,
+      ratees.map((q) => { const e = parQuestion.get(q.question); return GT.ficheCorrige(q, { rate: true, taReponse: e.taReponse }); }),
+      reussies.length ? h('h4', { class: 'carnet-section' }, 'Réussies (' + reussies.length + ')') : null,
+      reussies.map((q) => GT.ficheCorrige(q)));
+  }
 
   ECRANS.podium.apres = (d) => { if (d.rang === 1) GT.confettis(); };
 
   /* ═══════════ Les petites mises à jour ═══════════ */
 
   const EVENEMENTS = {
+    pause: (d) => { GT.pause(d.enPause); if (!d.enPause && etat.ecran) afficher(etat.ecran.type, etat.ecran.donnees); },
     // La Cible : on passe devant sa cible, ou quelqu'un nous double.
     depassement: (d) => {
       const a = d.autre.avatar + ' ' + d.autre.nom;

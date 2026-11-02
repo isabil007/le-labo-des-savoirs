@@ -25,13 +25,14 @@
   const Q = exiger('../contenus/questions');
   const A = exiger('../contenus/activites');
   const H = exiger('../contenus/histoire');
+  const S = exiger('../contenus/supplement'); // élargit les banques ci-dessus et ajoute deux thèmes
 
   /* Un jeu « QCM classique » : un bloc, un nombre de questions, une fiche. */
   function fabriquer(reglages) {
     class JeuTheme extends JeuQCM {
       constructor(ctx) {
         const banque = typeof reglages.banque === 'function' ? reglages.banque() : reglages.banque;
-        super(ctx, Object.assign({}, reglages.rythme, { questions: outils.tirer(banque, reglages.nombre) }));
+        super(ctx, Object.assign({}, reglages.rythme, { questions: outils.tirerFrais(banque, reglages.nombre) }));
       }
       vueTablette(q) { return { intitule: q.question, surtitre: q.theme }; }
       explication(q) { return { titre: q.chute || reglages.titreCorrection || 'La correction', texte: q.correction }; }
@@ -45,7 +46,7 @@
   function fabriquerFixe(reglages) {
     class JeuFixe extends JeuQCM {
       constructor(ctx) {
-        super(ctx, Object.assign({}, reglages.rythme, { questions: outils.tirer(reglages.banque, reglages.nombre).map(reglages.preparer), fixe: true }));
+        super(ctx, Object.assign({}, reglages.rythme, { questions: outils.tirerFrais(reglages.banque, reglages.nombre).map((a) => Object.assign(reglages.preparer(a), { _cle: outils.cle(a) })), fixe: true }));
       }
       vueTablette(q) { return { intitule: q.question, surtitre: q.theme }; }
       consigneJoueur() { return reglages.consigne; }
@@ -62,8 +63,8 @@
   function fabriquerBinaire(reglages) {
     class JeuBinaire extends JeuQCM {
       constructor(ctx) {
-        const questions = outils.tirer(reglages.banque, reglages.nombre).map((a) => ({
-          question: a.texte, theme: a.infection, choix: reglages.etiquettes.slice(), bonne: a.vrai ? 0 : 1, correction: a.correction
+        const questions = outils.tirerFrais(reglages.banque, reglages.nombre).map((a) => ({
+          _cle: outils.cle(a), question: a.texte, theme: a.infection, choix: reglages.etiquettes.slice(), bonne: a.vrai ? 0 : 1, correction: a.correction
         }));
         super(ctx, Object.assign({}, reglages.rythme, { questions, fixe: true }));
       }
@@ -153,6 +154,14 @@
       fiche: { id: 'betisier', nom: 'Les fausses bonnes idées', icone: '🤪', resume: 'Pour finir en riant : des réponses absurdes, une seule sérieuse.', regle: 'Trois réponses absurdes, une seule sérieuse. Riez, puis trouvez la bonne !' }
     }),
     fabriquer({
+      banque: S.prevention, nombre: 6, rythme: normal,
+      fiche: { id: 'prevention', nom: 'La prévention combinée', icone: '🛡️', resume: 'PrEP, TPE, préservatifs, vaccins, dépistage : la boîte à outils.', regle: 'Une question sur les outils de prévention : lequel, quand, pour qui ?' }
+    }),
+    fabriquer({
+      banque: S.meconnues, nombre: 6, rythme: normal,
+      fiche: { id: 'meconnues', nom: 'Les IST méconnues', icone: '🔎', resume: 'Trichomonas, Mycoplasma, LGV, mpox, gale… celles dont on parle moins.', regle: 'Les IST plus rares ou oubliées : reconnaître, traiter, orienter.' }
+    }),
+    fabriquer({
       banque: H.quiz, nombre: 7, rythme: { dureeMs: 20000, revelationMs: 11000 }, titreCorrection: 'Le saviez-vous ?',
       consigne: 'Le saviez-vous ?',
       fiche: { id: 'histoire', nom: 'Le saviez-vous ?', icone: '📜', resume: 'Cinq siècles d\'IST : de Naples en 1495 à I = I, des faits qui marquent.', regle: 'Une date, un fait historique : trouvez la bonne réponse. La suite de l\'histoire s\'affiche avec la correction.' }
@@ -179,7 +188,9 @@
       });
       // Six questions, six jeux différents.
       const vus = new Set();
-      const choisies = outils.melanger(reserve).filter((q) => (vus.has(q._fiche.id) ? false : vus.add(q._fiche.id))).slice(0, 6);
+      // Les questions jamais posées d'abord (puis les plus anciennes), une par jeu.
+      const fraiches = outils.melanger(reserve).sort((a, b) => outils.ancienneteVue(a) - outils.ancienneteVue(b));
+      const choisies = fraiches.filter((q) => (vus.has(q._fiche.id) ? false : vus.add(q._fiche.id))).slice(0, 6);
       super(ctx, { questions: choisies, fixe: true, dureeMs: 22000, revelationMs: 11000, pointsBase: 500, bonusVitesse: 500, pointsNeutre: 100 });
     }
     vueTablette(q) { return { intitule: q._vue.intitule, surtitre: q._fiche.icone + ' ' + q._fiche.nom }; }

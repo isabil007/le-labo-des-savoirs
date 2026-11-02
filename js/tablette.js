@@ -93,16 +93,18 @@
     bandeau.joueurs.replaceChildren(...joueurs.map((j) => h('div', {
       class: 'mini-joueur' + (j.connecte ? '' : ' absent') + (etat.aRepondu.has(j.id) ? ' a-repondu' : ''),
       'data-id': j.id, title: j.connecte ? j.nom : j.nom + ' (déconnecté)'
-    }, h('span', { class: 'avatar' }, j.avatar), j.nom, ' ', h('b', {}, j.score))));
+    }, GT.avatarEl(j, etat.code), j.nom, ' ', h('b', {}, j.score))));
 
     // Les boutons de l'animateur changent selon l'étape.
     const boutons = [];
     if (s.etat === 'intro') boutons.push(h('button', { class: 'bouton bouton-petit', onclick: () => cnx.emit('tablette:passer') }, 'C\'est parti !'));
     if (s.etat === 'jeu') {
+      boutons.push(h('button', { class: 'bouton bouton-petit' + (s.pause ? '' : ' bouton-discret'), onclick: () => cnx.emit('tablette:pause'), title: 'Arrêter le temps pour expliquer' }, s.pause ? '▶ Reprendre' : '⏸ Pause'));
       boutons.push(h('button', { class: 'bouton bouton-petit bouton-discret', onclick: () => cnx.emit('tablette:passer'), title: 'Passer à la suite' }, 'Passer ⏭'));
       boutons.push(h('button', { class: 'bouton bouton-petit bouton-discret', onclick: () => cnx.emit('tablette:terminer-jeu') }, 'Terminer ce jeu'));
     }
     if (s.etat === 'classement') boutons.push(h('button', { class: 'bouton bouton-petit bouton-discret', onclick: () => cnx.emit('tablette:podium') }, 'Finir la partie'));
+    boutons.push(h('button', { class: 'bouton bouton-petit bouton-discret bouton-son', title: 'Son du décompte', 'aria-label': GT.son.actif ? 'Couper le son' : 'Activer le son', onclick: (ev) => { ev.currentTarget.textContent = GT.son.basculer() ? '🔊' : '🔇'; } }, GT.son.actif ? '🔊' : '🔇'));
     bandeau.commandes.replaceChildren(...boutons);
   }
 
@@ -208,7 +210,7 @@
 
     // Les joueurs présents, avec la possibilité d'en retirer un (en deux touches, pour éviter les accidents).
     const cartes = s.joueurs.map((j) => h('div', { class: 'carte-joueur' + (j.connecte ? '' : ' absent') },
-      h('span', { class: 'avatar' }, j.avatar),
+      GT.avatarEl(j, etat.code),
       h('span', { class: 'nom' }, j.nom),
       etat.aConfirmer === j.id
         ? h('button', { class: 'bouton bouton-petit', style: { background: 'var(--corail)', boxShadow: 'none' }, onclick: () => { etat.aConfirmer = null; cnx.emit('tablette:retirer', { joueurId: j.id }); } }, 'Retirer ?')
@@ -274,6 +276,16 @@
         options.repartition ? h('span', { class: 'compte', title: 'Nombre de réponses' }, options.repartition[i]) : null)));
   }
 
+  /* « Le saviez-vous ? » : une note historique entre deux questions. */
+  RENDUS.anecdote = function (d) {
+    return h('div', { class: 'anecdote-ecran' },
+      h('div', { class: 'anecdote-carte' },
+        h('span', { class: 'anecdote-label' }, '📜 Le saviez-vous ?'),
+        h('span', { class: 'anecdote-annee' }, d.annee),
+        h('p', { class: 'anecdote-texte' }, d.texte)),
+      h('div', { style: { width: 'min(720px, 100%)' } }, GT.chrono(d.finA, d.dureeMs, { decompte: false })));
+  };
+
   RENDUS['qcm-question'] = function (d) {
     const compteur = h('span', { id: 'compteur-reponses', class: 'muet' }, d.nbRepondu + ' / ' + d.nbJoueurs + ' ont répondu');
     return h('div', { class: 'qcm' },
@@ -325,7 +337,7 @@
     const max = Math.max(1, ...classement.map((c) => c.score));
     return classement.map((c, i) => h('div', { class: 'ligne-classement', style: { animationDelay: (i * 70) + 'ms' } },
       h('span', { class: 'place' }, GT.rang(i + 1)),
-      h('span', { class: 'avatar' }, c.avatar),
+      GT.avatarEl(c, etat.code),
       h('div', { style: { minWidth: 0 } }, h('div', { class: 'nom' }, c.nom), h('div', { class: 'barre', style: { width: (c.score / max * 100) + '%' } })),
       h('span', { class: 'total' }, GT.points(c.score), avecGain && c.gain ? h('span', { class: 'gain' }, '+' + c.gain + ' ce jeu') : null)));
   }
@@ -349,7 +361,7 @@
   RENDUS.podium = function (d) {
     etat.podium = d;
     const [premier, deuxieme, troisieme] = d.classement;
-    const marche = (c, place) => c ? h('div', { class: 'marche' }, h('span', { class: 'avatar' }, c.avatar), h('span', { class: 'nom' }, c.nom), h('span', { class: 'muet' }, GT.points(c.score)), h('div', { class: 'socle' }, place)) : h('div', { class: 'marche' });
+    const marche = (c, place) => c ? h('div', { class: 'marche' }, GT.avatarEl(c, etat.code), h('span', { class: 'nom' }, c.nom), h('span', { class: 'muet' }, GT.points(c.score)), h('div', { class: 'socle' }, place)) : h('div', { class: 'marche' });
     return h('div', { class: 'colonne', style: { maxWidth: '900px', width: '100%', margin: '0 auto' } },
       h('span', { class: 'etiquette', style: { justifySelf: 'center' } }, premier && deuxieme && premier.score === deuxieme.score ? 'Égalité en tête !' : 'Victoire !'),
       h('h1', { style: { textAlign: 'center', fontSize: 'clamp(2.2rem, 4.6vw, 3.4rem)', color: 'var(--accent-fort)' } }, premier ? (premier.avatar + ' ' + premier.nom + (deuxieme && premier.score === deuxieme.score ? ' et ' + deuxieme.avatar + ' ' + deuxieme.nom + ', ex aequo !' : ' remporte la partie !')) : 'Le podium'),
@@ -370,26 +382,20 @@
    * n'en sait rien) : on revient au podium d'une touche.
    */
   RENDUS.corrige = function (d) {
-    const lignes = (d.corrige || []).map((q) => {
-      const taux = q.total ? Math.round(q.reussis / q.total * 100) : 0;
-      return h('details', { class: 'ligne-corrige' + (taux < 50 ? ' a-revoir' : '') },
-        h('summary', {},
-          h('span', { class: 'taux', title: 'Taux de réussite' }, taux + ' %'),
-          h('span', { class: 'q' }, h('small', {}, q.icone + ' ' + q.jeu), q.question)),
-        h('div', { class: 'reponse-corrige' }, h('strong', {}, '✓ ' + q.bonne), q.correction ? h('p', {}, q.correction) : null));
-    });
+    const lignes = (d.corrige || []).map((q) => GT.ficheCorrige(q, { taux: q.total ? Math.round(q.reussis / q.total * 100) : 0 }));
     const aRevoir = (d.corrige || []).filter((q) => q.total && q.reussis / q.total < 0.5).length;
     return h('div', { class: 'colonne', style: { maxWidth: '1000px', width: '100%', margin: '0 auto' } },
       h('div', { class: 'qcm-tete' },
         h('h1', { style: { fontSize: '2.2rem' } }, 'Le corrigé'),
         h('button', { class: 'bouton bouton-petit bouton-discret', onclick: () => afficher('podium', etat.podium) }, '← Retour au podium')),
-      h('p', { class: 'muet' }, (d.corrige || []).length + ' questions posées, des plus ratées aux mieux réussies · ' + aRevoir + ' à revoir en priorité (réussies par moins de la moitié du groupe, en rouge). Touchez une question pour voir la correction.'),
+      h('p', { class: 'muet' }, (d.corrige || []).length + ' questions posées, des plus ratées aux mieux réussies · ' + aRevoir + ' à revoir en priorité (réussies par moins de la moitié du groupe, en rouge). Chaque fiche rappelle la question, la bonne réponse et l\'explication.'),
       h('div', { class: 'corrige' }, lignes));
   };
 
   /* ═══════════ Les petites mises à jour (événements) ═══════════ */
 
   const EVENEMENTS = {
+    pause: (d) => GT.pause(d.enPause, { reprendre: () => cnx.emit('tablette:pause'), texte: 'Le temps est arrêté pour tout le monde. Expliquez, puis reprenez : chacun retrouve le temps qui lui restait.' }),
     'a-repondu': (d) => {
       marquerReponse(d.joueurId);
       const c = document.getElementById('compteur-reponses');
