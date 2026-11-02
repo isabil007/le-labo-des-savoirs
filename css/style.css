@@ -522,3 +522,20 @@ body:has(.tablette) .decompte span { width: min(30vmin, 210px); font-size: min(1
 
 /* L'énoncé sur le téléphone (jeu à distance) */
 .enonce-tel { margin: 0; padding: 4px 16px 10px; font-weight: 700; font-size: 1.05rem; line-height: 1.35; text-wrap: balance; }
+
+/* Classement en direct sur le téléphone */
+.telephone .entete { flex-wrap: wrap; }
+.score-direct { flex-basis: 100%; display: flex; gap: 6px; margin: 2px 0 0; padding: 2px 0 2px; list-style: none; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
+.score-direct::-webkit-scrollbar { display: none; }
+.score-chip { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 6px; border-radius: 999px; background: var(--nappe-3); font-size: .85rem; white-space: nowrap; position: relative; scroll-snap-align: start; transition: background .3s; }
+.score-chip strong { font-variant-numeric: tabular-nums; }
+.score-chip.moi { background: var(--accent-fort, #8383F7); color: var(--sur-accent, #fff); }
+.score-chip.absent { opacity: .5; }
+.score-rang { min-width: 1.4em; height: 1.4em; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.55); color: #23213A; font-size: .72rem; font-weight: 800; }
+.score-nom { max-width: 7em; overflow: hidden; text-overflow: ellipsis; }
+.score-gain { font-weight: 800; color: #FF5D5D; animation: gain-monte 1.6s ease-out forwards; }
+.score-chip.moi .score-gain { color: #FFE3C9; }
+.score-chip.monte { animation: chip-pulse .6s ease-out; }
+@keyframes gain-monte { 0% { opacity: 0; transform: translateY(6px); } 20% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes chip-pulse { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .score-gain, .score-chip.monte { animation: none; } }

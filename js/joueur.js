@@ -105,8 +105,32 @@
     entete.replaceChildren(
       h('span', { class: 'avatar', 'aria-hidden': 'true' }, etat.avatar),
       h('div', { class: 'qui' }, h('strong', {}, etat.nom), h('span', {}, GT.points(m ? m.score : 0) + ' · salle ' + etat.code)),
-      h('button', { class: 'bouton-reagir', 'aria-label': 'Envoyer une réaction', onclick: () => ouvrirReactions(null) }, '💬')
+      h('button', { class: 'bouton-reagir', 'aria-label': 'Envoyer une réaction', onclick: () => ouvrirReactions(null) }, '💬'),
+      scoresEnDirect()
     );
+  }
+
+  /* Le classement en direct : les points de chacun, mis à jour à chaque bonne réponse. */
+  const scoresVus = new Map();
+  function scoresEnDirect() {
+    const joueurs = (etat.salle ? etat.salle.joueurs : []).filter((j) => j.connecte || j.score > 0);
+    if (joueurs.length < 2) return null;
+    const tries = joueurs.slice().sort((a, b) => b.score - a.score);
+    const bande = h('ol', { class: 'score-direct', 'aria-label': 'Classement en direct' }, tries.map((j, i) => {
+      const avant = scoresVus.get(j.id);
+      const gain = avant !== undefined && j.score > avant ? j.score - avant : 0;
+      scoresVus.set(j.id, j.score);
+      const rang = tries.filter((x) => x.score > j.score).length + 1;
+      return h('li', { class: 'score-chip' + (j.id === etat.joueurId ? ' moi' : '') + (gain ? ' monte' : '') + (j.connecte ? '' : ' absent') },
+        h('span', { class: 'score-rang' }, rang === 1 ? '👑' : String(rang)),
+        h('span', { 'aria-hidden': 'true' }, j.avatar),
+        h('span', { class: 'score-nom' }, j.id === etat.joueurId ? 'Toi' : j.nom),
+        h('strong', {}, GT.points(j.score).replace(/\s*pts?$/, '')),
+        gain ? h('span', { class: 'score-gain' }, '+' + gain) : null);
+    }));
+    // On garde sa propre pastille visible quand la bande défile.
+    requestAnimationFrame(() => { const m = bande.querySelector('.moi'); if (m && m.scrollIntoView) m.scrollIntoView({ inline: 'nearest', block: 'nearest' }); });
+    return bande;
   }
 
   /*
