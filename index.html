@@ -1,0 +1,102 @@
+<title>Le labo des savoirs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lilita+One&family=Nunito:wght@700;800;900&display=swap">
+<style>
+  /* Mise en page : la tablette à gauche (grande), la colonne des téléphones à droite. */
+  /* Palette « Centre S » par défaut ; la palette « nuit » d'origine avec ?palette=nuit. */
+  :root {
+    --nappe: #FAF8F4; --nappe-2: #F1EDE5; --nappe-3: #E8E7FC; --trait: #DDD8CE;
+    --papier: #1B2250; --brume: #5E5F86; --tournesol: #8383F7; --accent-fort: #5B5BDB; --sur-accent: #FFFFFF; --corail: #C93838; --menthe: #83ACF7;
+    --cadre: #1B2250; --cadre-bord: #3A3F78;
+    --police-titre: "Nunito", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif; --poids-titre: 800;
+    --police-texte: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    color-scheme: light;
+  }
+  :root[data-palette="nuit"] {
+    --nappe: #151933; --nappe-2: #1E2348; --nappe-3: #2A3166; --trait: #3A427E;
+    --papier: #F4F5FB; --brume: #A9AFD6; --tournesol: #FFC93C; --accent-fort: #FFC93C; --sur-accent: #151933; --corail: #FF6B5B; --menthe: #3DD6B5;
+    --cadre: #0B0E22; --cadre-bord: #3A427E;
+    --police-titre: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif; --poids-titre: 400;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--nappe); color: var(--papier); font-family: var(--police-texte); font-size: 15px; line-height: 1.45;
+    padding-block: 16px 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  button { font: inherit; color: inherit; cursor: pointer; border: 0; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  :focus-visible { outline: 3px solid var(--accent-fort); outline-offset: 2px; }
+  .titre-sim { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .titre-sim h1 .sur-nom { display: block; font-family: var(--police-texte); font-size: .72rem; font-weight: 700; letter-spacing: .14em; color: var(--brume); margin-bottom: 2px; }
+  .titre-sim h1 small { font-family: var(--police-texte); font-size: .9rem; color: var(--brume); font-weight: 700; margin-left: 8px; }
+  .titre-sim h1 { margin: 0; font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.8rem; color: var(--accent-fort); }
+  .titre-sim p { margin: 0; color: var(--brume); max-width: 70ch; }
+  .titre-sim b { color: var(--papier); }
+  .sim { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); gap: 18px; align-items: start; }
+  .colonne-sim { display: grid; gap: 10px; min-width: 0; }
+  .etiquette-sim { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brume); display: flex; justify-content: space-between; gap: 8px; }
+  .etiquette-sim span { color: var(--accent-fort); letter-spacing: .2em; }
+  .porte-appareil { position: relative; width: 100%; overflow: hidden; }
+  .appareil { position: absolute; top: 11px; left: 11px; transform-origin: top left; border-radius: 22px; overflow: hidden; background: var(--nappe); box-shadow: 0 0 0 10px var(--cadre), 0 0 0 11px var(--cadre-bord), 0 20px 50px rgba(27, 34, 80, .25); }
+  .appareil iframe { width: 100%; height: 100%; border: 0; display: block; background: var(--nappe); }
+  #appareil-telephone { border-radius: 34px; }
+  .onglets { display: flex; gap: 6px; flex-wrap: wrap; }
+  .onglet { background: var(--nappe-2); border: 1px solid var(--trait); padding: 6px 12px; border-radius: 99px; }
+  .onglet[aria-pressed="true"] { background: var(--accent-fort); color: var(--sur-accent); border-color: var(--accent-fort); font-weight: 700; }
+  .onglet-ajout { border-style: dashed; color: var(--brume); background: transparent; }
+  .panneau-robots { background: var(--nappe-2); border: 1px solid var(--trait); border-radius: 16px; padding: 12px; display: grid; gap: 10px; }
+  .panneau-robots p { margin: 0; color: var(--brume); font-size: .9rem; }
+  .boutons-robots { display: flex; gap: 8px; flex-wrap: wrap; }
+  .bouton-sim { background: var(--accent-fort); color: var(--sur-accent); font-weight: 700; padding: 8px 14px; border-radius: 99px; }
+  .bouton-sim.discret { background: var(--nappe-3); color: var(--papier); }
+  #robots { display: flex; flex-wrap: wrap; gap: 6px; }
+  .robot { display: inline-flex; align-items: center; gap: 6px; background: var(--nappe-3); border-radius: 99px; padding: 4px 6px 4px 10px; font-size: .9rem; }
+  .robot button { background: none; color: var(--brume); width: 24px; height: 24px; border-radius: 50%; }
+  .robot button:hover { color: var(--corail); }
+  @media (max-width: 900px) { .sim { grid-template-columns: minmax(0, 1fr); } }
+</style>
+<header class="titre-sim">
+    <h1><span class="sur-nom">SEX’ACT · SEX’PLIQUE · IST’ORY &amp; VIH’GILANCE</span>Le labo des savoirs <small>VIH &amp; IST · Centre S</small></h1>
+    <p>Le simulateur : <b>la tablette</b> à gauche, <b>les téléphones</b> à droite. Rejoignez la partie depuis le téléphone, ajoutez des robots, puis lancez la partie depuis la tablette. Quinze jeux tirés de vos supports, un défi par manche 🎯, une Grande Finale ×2 et le corrigé complet à la fin.</p>
+  </header>
+
+  <div class="sim">
+    <section class="colonne-sim" aria-label="Tablette">
+      <div class="etiquette-sim">Tablette (ou écran de la classe) <span id="code-sim">····</span></div>
+      <div class="porte-appareil">
+        <div class="appareil" id="appareil-tablette"><iframe id="cadre-tablette" title="Tablette" src="tablette.html?sim=1"></iframe></div>
+      </div>
+    </section>
+
+    <aside class="colonne-sim" aria-label="Téléphones et robots">
+      <div class="etiquette-sim">Les téléphones</div>
+      <div class="onglets" id="onglets"></div>
+      <div class="porte-appareil">
+        <div class="appareil" id="appareil-telephone"><div id="telephones" style="width:100%;height:100%"></div></div>
+      </div>
+      <div class="panneau-robots">
+        <div class="etiquette-sim">Les robots</div>
+        <p>Des joueurs automatiques pour essayer le jeu seul·e. Ils répondent au hasard : ils n'ont pas révisé !</p>
+        <div class="boutons-robots">
+          <button class="bouton-sim" id="completer" type="button">Compléter à 4 joueurs</button>
+          <button class="bouton-sim discret" id="ajouter-robot" type="button">+ Un robot</button>
+        </div>
+        <div id="robots"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Le moteur du jeu, chargé dans l'ordre : les outils, les contenus, les jeux, puis le chef d'orchestre. -->
+  <script src="moteur/outils.js"></script>
+  <script src="moteur/contenus/questions.js"></script>
+  <script src="moteur/contenus/activites.js"></script>
+  <script src="moteur/contenus/histoire.js"></script>
+  <script src="moteur/jeux/base.js"></script>
+  <script src="moteur/jeux/quiz.js"></script>
+  <script src="moteur/jeux/ordre.js"></script>
+  <script src="moteur/moteur.js"></script>
+  <script src="js/commun.js"></script>
+  <script src="js/simulateur.js"></script>

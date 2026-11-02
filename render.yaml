@@ -1,0 +1,9 @@
+# Mise en ligne sur Render (offre gratuite) : Render lit ce fichier tout seul.
+services:
+  - type: web
+    name: le-labo-des-savoirs
+    runtime: node
+    plan: free
+    buildCommand: "echo 'Aucune dépendance à installer'"
+    startCommand: node serveur.js
+    healthCheckPath: /sante

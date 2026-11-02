@@ -1,0 +1,10 @@
+{
+  "name": "le-labo-des-savoirs",
+  "version": "1.0.0",
+  "description": "Jeu VIH & IST pour étudiants infirmiers : un écran pour la classe, un téléphone par élève (Centre S).",
+  "main": "serveur.js",
+  "scripts": { "start": "node serveur.js" },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -1,0 +1,521 @@
+/*
+ * ════════════════════════════════════════════════════════════════════
+ *  LE LABO DES SAVOIRS — La feuille de style (écran de la classe et téléphones)
+ * ════════════════════════════════════════════════════════════════════
+ *
+ *  DEUX PALETTES
+ *  ─────────────
+ *  • « Centre S » (par défaut) : la charte de l'ASBL. Couleur principale
+ *    #8383F7 (pervenche du logo) ; couleurs secondaires #E8A9CC (rose),
+ *    #FF5D5D (rouge), #FF8E4F (orange), #83ACF7 (bleu), #F1EDE5 (crème).
+ *    Un bleu nuit pour le texte, un fond blanc cassé. Claire et arrondie,
+ *    lisible au projecteur.
+ *  • « nuit » : la palette d'origine (reprise de La Grande Tablée),
+ *    conservée telle quelle. Pour la retrouver, ajoutez ?palette=nuit à
+ *    l'adresse (par exemple http://…/?palette=nuit) : le choix est
+ *    retenu sur l'appareil.
+ *
+ *  Les noms des jetons (--nappe, --papier, --tournesol…) viennent de la
+ *  palette d'origine ; seules leurs valeurs changent d'une palette à
+ *  l'autre. Les caractères « Atkinson Hyperlegible » ont été dessinés
+ *  pour les personnes malvoyantes : ils restent lisibles de loin.
+ */
+
+/* ─── Palette « Centre S » (par défaut) ─── */
+:root {
+  --nappe: #FAF8F4;          /* le fond, blanc cassé */
+  --nappe-2: #F1EDE5;        /* les surfaces : le crème des supports Centre S */
+  --nappe-3: #E8E7FC;        /* les éléments en relief : pervenche très pâle */
+  --trait: #DDD8CE;          /* filets et bordures */
+  --papier: #1B2250;         /* le texte principal, bleu nuit */
+  --brume: #5E5F86;          /* le texte secondaire */
+  --tournesol: #8383F7;      /* l'accent de marque, pervenche du logo (charte Centre S) */
+  --accent-fort: #5B5BDB;    /* boutons et textes d'accent (contraste suffisant) */
+  --sur-accent: #FFFFFF;     /* le texte posé sur --accent-fort */
+  --corail: #FF5D5D;         /* rouge de la charte : alertes, réponse fausse */
+  --menthe: #83ACF7;         /* bleu de la charte : bonne réponse, correction */
+  --lilas: #E8A9CC;          /* rose de la charte */
+  --orange: #FF8E4F;         /* orange de la charte : la Grande Finale, les rangs */
+  --choix-a: #FF5D5D; --choix-b: #FF8E4F; --choix-c: #8383F7; --choix-d: #83ACF7;   /* les quatre réponses */
+  --vert-texte: #3B5FC4;     /* la couleur « juste », en texte (bleu foncé) */
+  --rouge-texte: #C93838;    /* le rouge, en texte */
+  --sur-couleur: #1B2250;    /* le texte posé sur une couleur vive */
+  --sur-alerte: #1B2250;
+  --carte: #FFFFFF;          /* les cartes blanches (invitation, bulles, corrections) */
+  --sur-carte: #1B2250;
+  --bandeau: rgba(250, 248, 244, .92);
+  --voile: rgba(27, 34, 80, .45);
+  --halo: rgba(131, 131, 247, .40);
+  --halo-chaud: rgba(255, 142, 79, .45);
+  --ombre: 0 12px 32px rgba(27, 34, 80, .10);
+  --ombre-bouton: #4343B8;
+  --ombre-discret: #D3CFE6;
+  --ombre-touche: rgba(27, 34, 80, .22);
+  --fond-image: radial-gradient(circle at 12% 0%, rgba(131, 131, 247, .16), transparent 42%), radial-gradient(circle at 100% 100%, rgba(255, 142, 79, .10), transparent 38%);
+  --police-titre: "Nunito", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --poids-titre: 800;
+  --police-texte: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --rayon: 18px;
+  color-scheme: light;
+}
+
+/* ─── Palette « nuit » (d'origine, conservée) ─── */
+:root[data-palette="nuit"] {
+  --nappe: #151933; --nappe-2: #1E2348; --nappe-3: #2A3166; --trait: #3A427E;
+  --papier: #F4F5FB; --brume: #A9AFD6;
+  --tournesol: #FFC93C; --accent-fort: #FFC93C; --sur-accent: #151933;
+  --corail: #FF6B5B; --menthe: #3DD6B5; --lilas: #9B8CFF; --orange: #FFC93C;
+  --choix-a: #FF6B5B; --choix-b: #FFC93C; --choix-c: #3DD6B5; --choix-d: #9B8CFF;
+  --vert-texte: #3DD6B5; --rouge-texte: #FF6B5B;
+  --sur-couleur: #151933; --sur-alerte: #FFFFFF;
+  --carte: #F4F5FB; --sur-carte: #151933;
+  --bandeau: rgba(21, 25, 51, .85); --voile: rgba(5, 7, 20, .55);
+  --halo: rgba(255, 201, 60, .45); --halo-chaud: rgba(255, 201, 60, .45);
+  --ombre: 0 10px 30px rgba(5, 7, 20, .45);
+  --ombre-bouton: #C99A1E; --ombre-discret: #161B40; --ombre-touche: rgba(0, 0, 0, .28);
+  --fond-image: radial-gradient(circle at 20% 0%, rgba(155, 140, 255, .10), transparent 45%), radial-gradient(circle at 100% 100%, rgba(61, 214, 181, .08), transparent 40%);
+  --police-titre: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --poids-titre: 400;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--nappe);
+  background-image: var(--fond-image);
+  color: var(--papier);
+  font-family: var(--police-texte);
+  font-size: 17px;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+}
+h1, h2, h3, .titre { font-family: var(--police-titre); font-weight: var(--poids-titre); letter-spacing: .005em; line-height: 1.12; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; }
+:focus-visible { outline: 3px solid var(--accent-fort); outline-offset: 3px; border-radius: 6px; }
+[hidden] { display: none !important; }
+
+/* ─── Boutons ─── */
+.bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  min-height: 52px; padding: .7em 1.4em; border-radius: 999px;
+  background: var(--accent-fort); color: var(--sur-accent);
+  font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.15rem; letter-spacing: .02em;
+  box-shadow: 0 4px 0 var(--ombre-bouton); transition: transform .08s ease, box-shadow .08s ease, opacity .2s;
+}
+.bouton:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ombre-bouton); }
+.bouton:disabled { opacity: .45; cursor: not-allowed; }
+.bouton-discret { background: var(--nappe-3); color: var(--papier); box-shadow: 0 4px 0 var(--ombre-discret); }
+.bouton-discret:active { box-shadow: 0 1px 0 var(--ombre-discret); }
+.bouton-petit { min-height: 40px; padding: .4em 1em; font-size: .95rem; }
+
+/* ─── Chronomètre ─── */
+.chrono { display: flex; align-items: center; gap: .75rem; width: 100%; }
+.chrono-piste { flex: 1; height: 12px; border-radius: 99px; background: var(--nappe-3); overflow: hidden; }
+.chrono-remplissage { height: 100%; width: 100%; background: var(--menthe); transform-origin: left center; border-radius: 99px; }
+.chrono-secondes { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.2rem; min-width: 3.2ch; text-align: right; font-variant-numeric: tabular-nums; }
+.chrono-urgent .chrono-remplissage { background: var(--corail); }
+.chrono-urgent .chrono-secondes { color: var(--rouge-texte); }
+.chrono-grand .chrono-piste { height: 18px; }
+.chrono-grand .chrono-secondes { font-size: 1.7rem; }
+
+/*
+ * Le décompte des 3 dernières secondes : un grand chiffre qui apparaît au
+ * centre de l'écran (3, 2, 1), grandit puis s'efface dans la seconde. Il
+ * laisse passer les doigts : on peut encore répondre pendant qu'il s'affiche.
+ */
+.decompte { position: fixed; inset: 0; z-index: 45; display: grid; place-items: center; pointer-events: none; }
+.decompte span {
+  width: min(42vmin, 260px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: var(--corail); color: var(--sur-alerte); font-family: var(--police-titre); font-weight: var(--poids-titre);
+  font-size: min(26vmin, 170px); line-height: 1; font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 12px rgba(255, 93, 93, .18), 0 0 80px rgba(255, 93, 93, .45);
+  animation: decompte .95s cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes decompte {
+  0% { opacity: 0; transform: scale(.4); }
+  12% { opacity: 1; transform: scale(1.06); }
+  24% { transform: scale(1); }
+  82% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+/* ─── Les quatre couleurs de réponse ─── */
+.choix-a { --c: var(--choix-a); }
+.choix-b { --c: var(--choix-b); }
+.choix-c { --c: var(--choix-c); }
+.choix-d { --c: var(--choix-d); }
+.forme { font-size: 1.1em; line-height: 1; }
+
+/* ─── Petites étiquettes ─── */
+.etiquette {
+  display: inline-block; padding: .25em .8em; border-radius: 99px;
+  background: var(--nappe-3); color: var(--accent-fort);
+  font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+.muet { color: var(--brume); }
+
+/* ─── Bulles d'information et réactions ─── */
+#bulles { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 50; display: grid; gap: 8px; width: min(92vw, 420px); pointer-events: none; }
+.bulle { background: var(--carte); color: var(--sur-carte); padding: .75em 1.1em; border-radius: 14px; box-shadow: var(--ombre); font-weight: 700; text-align: center; animation: monte .25s ease-out; transition: opacity .5s, transform .5s; }
+.bulle.succes { background: var(--menthe); color: var(--sur-couleur); }
+.bulle.alerte { background: var(--corail); color: var(--sur-alerte); }
+.bulle-part { opacity: 0; transform: translateY(10px); }
+@keyframes monte { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* ─── Bandeau « connexion perdue » ─── */
+.hors-ligne { position: fixed; inset: 0 0 auto; z-index: 60; background: var(--corail); color: var(--sur-alerte); text-align: center; font-weight: 700; padding: calc(.5em + env(safe-area-inset-top, 0px)) 1em .5em; }
+
+/* ═══════════════════════ L'ÉCRAN DE LA CLASSE ═══════════════════════ */
+
+.tablette { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.tablette .bandeau {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding-block: 12px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px));
+  border-bottom: 1px solid var(--trait); background: var(--bandeau);
+}
+.marque { display: inline-flex; align-items: center; gap: 10px; font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.5rem; color: var(--accent-fort); white-space: nowrap; }
+.marque small { color: var(--brume); font-family: var(--police-texte); font-weight: 700; font-size: .8rem; margin-left: .5em; letter-spacing: .1em; }
+.code-salle { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.2rem; background: var(--nappe-3); padding: .2em .7em; border-radius: 10px; letter-spacing: .18em; }
+.mini-joueurs { display: flex; gap: 6px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.mini-joueur { display: flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border-radius: 99px; background: var(--nappe-2); white-space: nowrap; font-size: .9rem; transition: background .3s; }
+.mini-joueur .avatar { font-size: 1.3rem; }
+.mini-joueur b { font-variant-numeric: tabular-nums; color: var(--accent-fort); }
+.mini-joueur.absent { opacity: .45; }
+.mini-joueur.a-repondu { background: var(--menthe); color: var(--sur-couleur); }
+.mini-joueur.a-repondu b { color: var(--sur-couleur); }
+.commandes { display: flex; gap: 8px; }
+
+.scene {
+  flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column;
+  padding-block: 24px; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+.scene > * { animation: apparait .35s ease-out; }
+@keyframes apparait { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Le salon d'accueil */
+.salon { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px; align-items: start; }
+.invitation { background: var(--carte); color: var(--sur-carte); border-radius: 26px; padding: 26px; display: grid; gap: 14px; justify-items: center; text-align: center; box-shadow: var(--ombre); border: 1px solid var(--trait); }
+.invitation h2 { font-size: 1.9rem; }
+.qr { width: min(240px, 60vw); aspect-ratio: 1; display: grid; place-items: center; background: #FFFFFF; border-radius: 12px; }
+.qr svg, .qr img { width: 100%; height: auto; display: block; }
+.code-geant { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: clamp(3rem, 8vw, 5.4rem); letter-spacing: .14em; line-height: 1; color: var(--sur-carte); }
+.adresse { font-size: .95rem; word-break: break-all; color: #3A427E; }
+.colonne { display: grid; gap: 22px; min-width: 0; }
+.bloc-titre { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.bloc-titre h3 { font-size: 1.4rem; }
+.grille-joueurs { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 10px; }
+.carte-joueur { display: flex; align-items: center; gap: 10px; background: var(--nappe-2); border: 1px solid var(--trait); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+.carte-joueur .avatar { font-size: 1.9rem; }
+.carte-joueur .nom { flex: 1; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.carte-joueur .retirer { width: 32px; height: 32px; border-radius: 50%; color: var(--brume); }
+.carte-joueur .retirer:hover { background: var(--nappe-3); color: var(--rouge-texte); }
+.place-libre { border-style: dashed; color: var(--brume); justify-content: center; min-height: 58px; }
+.grille-jeux { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.carte-jeu { text-align: left; display: grid; gap: 4px; padding: 14px; border-radius: 16px; background: var(--nappe-2); border: 2px solid var(--trait); transition: border-color .2s, background .2s; }
+.carte-jeu .icone { font-size: 1.8rem; }
+.carte-jeu strong { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.1rem; }
+.carte-jeu span { font-size: .88rem; color: var(--brume); }
+.carte-jeu[aria-pressed="true"] { border-color: var(--tournesol); background: var(--nappe-3); }
+.carte-jeu[aria-pressed="false"] { opacity: .55; }
+.lancement { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+/* L'introduction d'un jeu */
+.intro { margin: auto; max-width: 820px; text-align: center; display: grid; gap: 20px; justify-items: center; }
+.intro .icone-geante { font-size: 6rem; line-height: 1; animation: rebond 1.4s ease-in-out infinite; }
+.intro h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--accent-fort); }
+.intro .regle { font-size: 1.4rem; max-width: 46ch; }
+@keyframes rebond { 50% { transform: translateY(-10px) rotate(-4deg); } }
+
+/* Question à choix multiple */
+.qcm { display: grid; gap: 22px; max-width: 1150px; width: 100%; margin: 0 auto; }
+.qcm-tete { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.qcm-question { font-size: clamp(1.8rem, 3.6vw, 2.8rem); font-family: var(--police-titre); text-wrap: balance; }
+.reponses { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.reponse { display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: var(--rayon); background: var(--c); color: var(--sur-couleur); font-size: clamp(1.15rem, 2.2vw, 1.6rem); font-weight: 700; min-height: 84px; position: relative; transition: opacity .4s, transform .4s; }
+.reponse .forme { font-size: 1.5em; }
+.reponse .texte { flex: 1; min-width: 0; }
+.reponse .compte { font-family: var(--police-titre); font-weight: var(--poids-titre); background: rgba(21, 25, 51, .16); padding: .1em .55em; border-radius: 10px; font-variant-numeric: tabular-nums; }
+.reponses.revelee .reponse:not(.juste) { opacity: .28; transform: scale(.97); }
+.reponses.revelee .reponse.juste { box-shadow: 0 0 0 5px var(--papier), var(--ombre); transform: scale(1.02); }
+.qcm-pied { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.qcm-pied .chrono { flex: 1; min-width: 220px; }
+
+/*
+ * La correction : une carte blanche posée au-dessus du reste, avec un
+ * filet vert et une pastille ✓. Elle arrive en glissant après la
+ * révélation de la bonne réponse : le regard va d'abord à la réponse,
+ * puis à son explication.
+ */
+.explication {
+  position: relative; display: grid; gap: 8px;
+  background: var(--carte); color: var(--sur-carte);
+  border: 1px solid var(--trait); border-radius: 22px;
+  padding: 22px 28px 24px 34px;
+  box-shadow: var(--ombre), inset 8px 0 0 var(--menthe);
+  animation: correction .55s .25s cubic-bezier(.2, .8, .2, 1) both;
+}
+.explication strong {
+  display: inline-flex; align-items: center; gap: .55em;
+  font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.5rem; line-height: 1.2; color: var(--vert-texte);
+}
+.explication strong::before {
+  content: "✓"; flex: none; width: 1.55em; height: 1.55em; border-radius: 50%;
+  display: grid; place-items: center; background: var(--menthe); color: var(--sur-couleur); font-size: .8em;
+}
+.explication p { font-size: 1.3rem; line-height: 1.5; max-width: 70ch; }
+@keyframes correction { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.gagnants { display: flex; flex-wrap: wrap; gap: 8px; }
+.gagnant { background: var(--nappe-3); border-radius: 99px; padding: 6px 14px; font-weight: 700; }
+.gagnant b { color: var(--vert-texte); margin-left: .3em; font-variant-numeric: tabular-nums; }
+
+/* Classement et podium */
+.palmares { display: grid; gap: 10px; max-width: 900px; width: 100%; margin: 0 auto; }
+.ligne-classement { display: grid; grid-template-columns: 3.2rem 2.4rem minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 16px; background: var(--nappe-2); border-radius: 14px; animation: monte .4s ease-out backwards; }
+.ligne-classement .place { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.5rem; color: var(--brume); }
+.ligne-classement .avatar { font-size: 1.8rem; }
+.ligne-classement .nom { font-weight: 700; font-size: 1.15rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ligne-classement .barre { height: 8px; border-radius: 99px; background: var(--tournesol); margin-top: 6px; transition: width .8s ease-out; }
+.ligne-classement .total { text-align: right; font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.ligne-classement .gain { display: block; font-family: var(--police-texte); font-size: .85rem; color: var(--vert-texte); }
+.ligne-classement:first-child { background: var(--nappe-3); }
+.ligne-classement:first-child .place { color: var(--accent-fort); }
+.marches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 14px; max-width: 760px; width: 100%; margin: 10px auto 26px; }
+.marche { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.marche .avatar { font-size: 3.4rem; animation: rebond 2s ease-in-out infinite; }
+.marche .socle { width: 100%; border-radius: 16px 16px 6px 6px; display: grid; place-items: center; font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 2.6rem; color: var(--sur-couleur); }
+.marche:nth-child(1) .socle { height: 120px; background: #C9D1E8; }
+.marche:nth-child(2) .socle { height: 170px; background: var(--tournesol); }
+.marche:nth-child(3) .socle { height: 90px; background: var(--orange); }
+.marche .nom { font-weight: 700; font-size: 1.2rem; overflow-wrap: anywhere; }
+
+/* Bulles de réaction qui s'envolent sur l'écran de la classe */
+.envol { position: fixed; z-index: 40; pointer-events: none; display: flex; align-items: center; gap: 8px; background: var(--carte); color: var(--sur-carte); padding: 8px 14px; border-radius: 99px; box-shadow: var(--ombre); font-weight: 700; animation: envol 3.6s ease-out forwards; max-width: 80vw; }
+.envol .gros { font-size: 1.8rem; }
+@keyframes envol { 0% { opacity: 0; transform: translateY(30px) scale(.8); } 12% { opacity: 1; transform: translateY(0) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-160px); } }
+
+/* ═══════════════════════ LE TÉLÉPHONE ═══════════════════════ */
+
+.telephone { min-height: 100%; display: flex; flex-direction: column; }
+.telephone .entete {
+  display: flex; align-items: center; gap: 10px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--nappe); border-bottom: 1px solid var(--trait);
+}
+.telephone .entete .avatar { font-size: 1.8rem; }
+.telephone .entete .qui { flex: 1; min-width: 0; line-height: 1.15; }
+.telephone .entete .qui strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.telephone .entete .qui span { color: var(--accent-fort); font-size: .9rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bouton-reagir { width: 46px; height: 46px; border-radius: 50%; background: var(--nappe-3); font-size: 1.3rem; }
+.ecran {
+  flex: 1; display: flex; flex-direction: column; gap: 16px;
+  padding-block: 18px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.ecran > * { animation: apparait .3s ease-out; }
+.centre { margin: auto 0; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.centre .gros-emoji { font-size: 4.2rem; line-height: 1; }
+.centre h2 { font-size: 1.9rem; }
+
+/* Formulaire pour rejoindre */
+.formulaire { display: grid; gap: 16px; }
+.formulaire h1 { font-size: 2.1rem; color: var(--accent-fort); }
+.champ { display: grid; gap: 6px; }
+.champ label { font-weight: 700; }
+.champ input { width: 100%; min-height: 56px; border-radius: 14px; border: 2px solid var(--trait); background: var(--carte); color: var(--sur-carte); padding: 0 16px; font-size: 1.25rem; }
+.champ input:focus { border-color: var(--tournesol); outline: none; }
+#code { text-transform: uppercase; letter-spacing: .3em; font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.6rem; }
+.choix-avatars { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.choix-avatars button { aspect-ratio: 1; font-size: 1.6rem; border-radius: 12px; background: var(--nappe-2); border: 2px solid transparent; }
+.choix-avatars button[aria-pressed="true"] { border-color: var(--tournesol); background: var(--nappe-3); }
+
+/* Grosses touches de réponse */
+.touches { display: grid; gap: 12px; flex: 1; }
+.touche { display: flex; align-items: center; gap: 14px; text-align: left; padding: 16px 18px; border-radius: var(--rayon); background: var(--c); color: var(--sur-couleur); font-weight: 700; font-size: 1.15rem; min-height: 74px; box-shadow: 0 5px 0 var(--ombre-touche); transition: transform .08s; }
+.touche:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ombre-touche); }
+.touche .forme { font-size: 1.6rem; }
+.verdict { font-size: 5rem; line-height: 1; font-weight: 700; }
+.verdict-juste { color: var(--menthe); }
+.verdict-faux { color: var(--corail); }
+.verdict-neutre { color: var(--accent-fort); font-family: var(--police-titre); }
+
+/* Feuille de réactions */
+.feuille-reactions { position: fixed; inset: auto 0 0; z-index: 30; background: var(--nappe-2); border-radius: 22px 22px 0 0; box-shadow: var(--ombre); display: grid; gap: 14px; padding-block: 18px calc(18px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); animation: monte .25s ease-out; max-height: 80vh; overflow: auto; }
+.destinataires { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.destinataires button { flex: none; padding: 8px 12px; border-radius: 99px; background: var(--nappe-3); white-space: nowrap; }
+.destinataires button[aria-pressed="true"] { background: var(--tournesol); color: var(--sur-couleur); font-weight: 700; }
+.emojis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.emojis button { aspect-ratio: 1.3; font-size: 2rem; border-radius: 14px; background: var(--nappe-3); }
+.voile { position: fixed; inset: 0; z-index: 29; background: var(--voile); }
+
+/* ═══════════════════════ LE PIMENT ET LES JEUX DU GRAND DÉPISTAGE ═══════════════════════ */
+
+/* La Grande Finale : un bandeau orange qui pulse doucement. */
+.bandeau-finale { background: var(--orange); color: var(--sur-couleur); font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.15rem; padding: .55em 1.2em; border-radius: 99px; text-align: center; box-shadow: 0 0 40px var(--halo-chaud); animation: pouls 1.6s ease-in-out infinite; }
+.intro-finale .icone-geante { filter: drop-shadow(0 0 24px var(--halo-chaud)); }
+.intro-finale h1 { text-shadow: 0 0 40px var(--halo); }
+@keyframes pouls { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+/* La Cible : l'annonce sur l'écran de la classe, la carte du défi sur le téléphone. */
+.annonce-defi { color: var(--accent-fort); font-weight: 700; font-size: 1.1rem; }
+.carte-defi { width: 100%; display: grid; gap: 6px; background: var(--carte); color: var(--sur-carte); border: 2px solid var(--tournesol); border-radius: var(--rayon); padding: 14px 16px; text-align: center; }
+.carte-defi strong { font-size: 1.15rem; }
+.etiquette-defi { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-fort); }
+.carte-defi.defi-reussi { border-color: var(--menthe); }
+.carte-defi.defi-reussi .etiquette-defi { color: var(--vert-texte); }
+.carte-defi.defi-rate { border-color: var(--trait); opacity: .85; }
+.carte-defi.defi-rate .etiquette-defi { color: var(--brume); }
+.defis-reussis { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.defis-reussis strong { margin-right: 4px; }
+
+/* Dans l'ordre ! — l'écran de la classe */
+.etapes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 0; margin: 0; list-style: none; }
+.etape { display: flex; align-items: center; gap: 14px; background: var(--nappe-2); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 14px 18px; font-size: clamp(1.05rem, 2vw, 1.35rem); font-weight: 700; }
+.etape .lettre { flex: none; width: 2.1em; height: 2.1em; border-radius: 50%; display: grid; place-items: center; background: var(--lilas); color: var(--sur-couleur); font-family: var(--police-titre); font-weight: var(--poids-titre); }
+.etapes-solution { grid-template-columns: minmax(0, 1fr); }
+.etapes-solution .etape { animation: monte .35s ease-out both; background: var(--carte); color: var(--sur-carte); }
+.etapes-solution .etape .lettre { background: var(--menthe); }
+
+/* Dans l'ordre ! — le téléphone */
+.consigne-ordre { font-weight: 700; font-size: 1.05rem; }
+.touche-etape { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border-radius: var(--rayon); background: var(--carte); color: var(--sur-carte); border: 1px solid var(--trait); font-weight: 700; font-size: 1rem; min-height: 60px; box-shadow: 0 4px 0 var(--ombre-touche); }
+.touche-etape .lettre { flex: none; width: 1.9em; height: 1.9em; border-radius: 50%; display: grid; place-items: center; background: var(--lilas); color: var(--sur-couleur); }
+.touche-etape:disabled { opacity: 1; background: var(--nappe-2); box-shadow: none; color: var(--brume); }
+.touche-etape .rang { flex: none; width: 1.9em; height: 1.9em; border-radius: 50%; display: grid; place-items: center; background: var(--orange); color: var(--sur-couleur); font-family: var(--police-titre); font-weight: var(--poids-titre); }
+.touche-etape:disabled .lettre { display: none; }
+.ordre-choisi { display: flex; gap: 6px; padding: 0; margin: 0; list-style: none; flex: 1; flex-wrap: wrap; }
+.ordre-choisi li { background: var(--orange); color: var(--sur-couleur); border-radius: 8px; padding: 2px 9px; font-weight: 700; }
+.liste-ordre { text-align: left; display: grid; gap: 6px; margin: 0; padding-left: 1.4em; width: 100%; }
+
+/* La correction sur le téléphone : la même carte, en plus compact. */
+.correction-tel {
+  width: 100%; text-align: left; font-size: 1.02rem; line-height: 1.5;
+  background: var(--carte); color: var(--sur-carte); border: 1px solid var(--trait); border-radius: 16px;
+  padding: 14px 16px 14px 22px; box-shadow: var(--ombre), inset 6px 0 0 var(--menthe);
+  animation: correction .5s .2s cubic-bezier(.2, .8, .2, 1) both;
+}
+.correction-tel::before { content: "✓ La correction"; display: block; margin-bottom: 4px; font-family: var(--police-titre); font-weight: var(--poids-titre); color: var(--vert-texte); font-size: 1.05rem; }
+
+/* Le corrigé (écran de la classe) et le carnet de corrections (téléphone) */
+.corrige { display: grid; gap: 8px; }
+.ligne-corrige { background: var(--carte); color: var(--sur-carte); border: 1px solid var(--trait); border-radius: 14px; overflow: hidden; }
+.ligne-corrige summary { display: flex; align-items: center; gap: 14px; padding: 12px 16px; cursor: pointer; list-style: none; }
+.ligne-corrige summary::-webkit-details-marker { display: none; }
+.ligne-corrige summary .q { flex: 1; min-width: 0; display: grid; gap: 2px; font-weight: 700; }
+.ligne-corrige summary small { color: var(--brume); font-weight: 400; font-size: .8rem; }
+.ligne-corrige .taux { flex: none; min-width: 3.6em; text-align: center; font-family: var(--police-titre); font-weight: var(--poids-titre); background: var(--menthe); color: var(--sur-couleur); border-radius: 10px; padding: 4px 6px; font-variant-numeric: tabular-nums; }
+.ligne-corrige.a-revoir .taux { background: var(--corail); color: var(--sur-alerte); }
+.ligne-corrige[open] summary { border-bottom: 1px solid var(--trait); }
+.ligne-corrige[open] { box-shadow: var(--ombre), inset 6px 0 0 var(--menthe); }
+.reponse-corrige { padding: 12px 16px 14px 22px; display: grid; gap: 6px; }
+.reponse-corrige strong { color: var(--vert-texte); font-size: 1.05rem; }
+.reponse-corrige p { margin: 0; color: var(--brume); }
+.reponse-corrige .ta-reponse { color: var(--rouge-texte); }
+.titre-carnet { margin: 10px 0 4px; font-size: 1.2rem; }
+
+/* ─── Écrans étroits (tablette en portrait, téléphones) ─── */
+@media (max-width: 860px) {
+  .salon { grid-template-columns: minmax(0, 1fr); }
+  .reponses { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) { .etapes { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 420px) {
+  .choix-avatars { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .marche .avatar { font-size: 2.4rem; }
+  .explication { padding: 18px 18px 18px 26px; }
+  .explication p { font-size: 1.1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+@media (prefers-reduced-motion: reduce) { .decompte span { animation: none !important; opacity: .92; } }
+/* Sur un téléphone, le décompte se place en haut, plus petit, pour ne pas masquer les touches. */
+@media (max-width: 600px) {
+  .decompte { place-items: start center; padding-top: calc(88px + env(safe-area-inset-top, 0px)); }
+  .decompte span { width: 128px; font-size: 84px; box-shadow: 0 0 0 8px rgba(255, 93, 93, .18), 0 0 50px rgba(255, 93, 93, .40); }
+}
+.logo { width: 40px; height: 40px; flex: none; }
+.logo-grand { width: 64px; height: 64px; }
+/* Sur l'écran de la classe, le décompte se pose sous les réponses, dans l'espace libre. */
+body:has(.tablette) .decompte { place-items: end center; padding-bottom: 5vh; }
+body:has(.tablette) .decompte span { width: min(30vmin, 210px); font-size: min(19vmin, 140px); }
+
+/* ─── Le nom du jeu, en trois niveaux : surtitre, titre, accroche ─── */
+.nom-jeu { display: grid; gap: 4px; }
+.nom-jeu .sur-nom, .marque .sur-nom { font-family: var(--police-texte); font-weight: 700; font-size: .78rem; letter-spacing: .12em; color: var(--accent-fort); text-transform: uppercase; }
+.nom-jeu h1, .nom-jeu .titre-jeu { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 2.1rem; line-height: 1.05; color: var(--papier); }
+.nom-jeu .accroche { color: var(--brume); font-weight: 700; }
+.nom-jeu-centre { justify-items: center; text-align: center; padding-bottom: 12px; border-bottom: 1px solid var(--trait); width: 100%; }
+.nom-jeu-centre .titre-jeu { color: var(--sur-carte); }
+.marque-texte { display: grid; line-height: 1.05; }
+.marque .sur-nom { font-size: .62rem; letter-spacing: .1em; }
+@media (max-width: 860px) { .marque .sur-nom { display: none; } }
+
+/* ─── Les quatre familles de jeux, chacune avec une couleur de la charte ─── */
+.cat-vihgilance { --cat: var(--choix-a); }
+.cat-sexplique { --cat: var(--tournesol); }
+.cat-istory { --cat: var(--lilas); }
+.cat-sexact { --cat: var(--orange); }
+.familles { display: grid; gap: 18px; }
+.famille { display: grid; gap: 10px; padding-left: 14px; border-left: 5px solid var(--cat); }
+.famille-tete { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.famille-tete h4 { margin: 0; font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.15rem; letter-spacing: .06em; }
+.famille-tete .muet { font-size: .88rem; }
+.carte-jeu[class*="cat-"][aria-pressed="true"] { border-color: var(--cat); }
+.famille-pastille { display: inline-block; padding: .3em .9em; border-radius: 99px; background: var(--cat); color: var(--sur-couleur); font-family: var(--police-titre); font-weight: var(--poids-titre); letter-spacing: .08em; font-size: .9rem; }
+
+/* Le bouton de la partie aléatoire : la même forme, la couleur de la famille « aléatoire ». */
+.bouton-alea { background: var(--choix-d); color: var(--sur-couleur); box-shadow: 0 4px 0 #5B83CF; }
+.bouton-alea:active { box-shadow: 0 1px 0 #5B83CF; }
+.cat-alea { --cat: var(--choix-d); }
+
+/* ─── Les confettis de la victoire ─── */
+.confettis { position: fixed; inset: 0; z-index: 55; pointer-events: none; overflow: hidden; }
+.confettis i { position: absolute; top: -20px; border-radius: 2px; animation-name: confetti; animation-timing-function: cubic-bezier(.3, .6, .4, 1); animation-fill-mode: both; }
+@keyframes confetti { 0% { opacity: 1; transform: translate3d(0, -20px, 0) rotate(0deg); } 100% { opacity: .9; transform: translate3d(40px, 105vh, 0) rotate(540deg); } }
+
+/* ─── Le mode solo et le mode à plusieurs ─── */
+.choix-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choix-mode button { display: grid; gap: 2px; text-align: left; padding: 12px 14px; border-radius: 16px; background: var(--nappe-2); border: 2px solid var(--trait); }
+.choix-mode button strong { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.05rem; }
+.choix-mode button span { font-size: .85rem; color: var(--brume); }
+.choix-mode button[aria-pressed="true"] { border-color: var(--tournesol); background: var(--nappe-3); }
+.ligne-joueur { display: flex; gap: 8px; align-items: center; }
+.ligne-joueur input { flex: 1; min-width: 0; min-height: 50px; border-radius: 14px; border: 2px solid var(--trait); background: var(--carte); color: var(--sur-carte); padding: 0 14px; font-size: 1.1rem; }
+.ligne-joueur input:focus { border-color: var(--tournesol); outline: none; }
+.retirer-joueur { width: 40px; height: 40px; border-radius: 50%; color: var(--brume); background: var(--nappe-2); }
+.carte-alea { display: grid; gap: 8px; padding: 14px 16px; border-radius: 18px; background: var(--carte); border: 2px solid var(--choix-d); box-shadow: var(--ombre); }
+.carte-alea strong { font-family: var(--police-titre); font-weight: var(--poids-titre); font-size: 1.15rem; }
+.scores-duel { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.score-duel { font-weight: 700; font-size: .95rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.qui-joue { font-weight: 700; color: var(--accent-fort); }
+.tour h2 { font-size: 2.1rem; }
+.resultats-duel { display: grid; gap: 8px; }
+.resultat-duel { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px; background: var(--nappe-2); text-align: left; }
+.resultat-duel .avatar { font-size: 1.6rem; }
+.resultat-duel .nom { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.resultat-duel .issue { font-family: var(--police-titre); font-weight: var(--poids-titre); font-variant-numeric: tabular-nums; }
+.resultat-duel.gagne { background: var(--carte); box-shadow: var(--ombre), inset 5px 0 0 var(--menthe); }
+.victoire .gros-emoji { font-size: 5rem; }
+.carnet-joueur { background: var(--nappe-2); border-radius: 16px; padding: 10px 12px; }
+.carnet-joueur > summary { font-weight: 700; cursor: pointer; padding: 4px 2px 8px; }
+.carnet-joueur .corrige { margin-top: 6px; }
+
+/* Wi-Fi + jeu : deux QR codes numérotés côte à côte */
+.deux-qr { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; align-items: flex-start; width: 100%; }
+.etape-qr { display: grid; justify-items: center; align-content: start; gap: 8px; position: relative; flex: 1 1 200px; max-width: 260px; }
+.etape-qr .qr { width: 100%; max-width: 220px; }
+.etape-qr strong { font-family: var(--police-titre); font-size: 1.15rem; }
+.etape-num { width: 2em; height: 2em; border-radius: 50%; display: grid; place-items: center; background: var(--accent-fort, #8383F7); color: var(--sur-accent, #fff); font-family: var(--police-titre); font-weight: 900; }
+.wifi-infos { display: grid; gap: 2px; font-size: .95rem; margin: 0; overflow-wrap: anywhere; }
+.reglages-wifi { width: 100%; text-align: left; font-size: .95rem; border-top: 1px solid var(--trait); padding-top: 10px; }
+.reglages-wifi summary { cursor: pointer; font-weight: 700; color: #3A427E; text-align: center; }
+.reglages-wifi[open] { display: grid; gap: 10px; }
+.reglages-wifi label { display: grid; gap: 4px; font-weight: 700; }
+.reglages-wifi label.case { display: flex; align-items: center; gap: 8px; }
+.reglages-wifi input:not([type]) { font: inherit; padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--trait); }
+.wifi-alerte { margin: 0; padding: 8px 10px; border-radius: 10px; background: #FFE9DC; color: #7A3410; border-left: 4px solid #FF8E4F; }

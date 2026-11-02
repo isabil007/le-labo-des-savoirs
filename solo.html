@@ -1,0 +1,35 @@
+<title>Labo des savoirs Solo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#FAF8F4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lilita+One&family=Nunito:wght@700;800;900&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* Le mode solo : une colonne de téléphone, centrée sur un grand écran. */
+  .solo { max-width: 560px; margin: 0 auto; }
+  .question-solo { font-size: clamp(1.35rem, 5.5vw, 1.8rem); }
+  .question-rappel { color: var(--brume); }
+  .verdict-ligne { display: flex; align-items: center; gap: 14px; }
+  .verdict-ligne .verdict { font-size: 3rem; }
+  .solo .grille-jeux { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .solo .etapes { grid-template-columns: minmax(0, 1fr); }
+  .solo .etape { font-size: 1rem; padding: 10px 14px; }
+  .solo .explication strong { font-size: 1.2rem; }
+  .solo .explication p { font-size: 1.05rem; }
+  .solo .formulaire .etiquette { justify-self: start; }
+</style>
+<div class="telephone solo">
+  <header class="entete" id="entete" hidden></header>
+  <main class="ecran" id="ecran"></main>
+</div>
+<script src="moteur/outils.js"></script>
+<script src="moteur/contenus/questions.js"></script>
+<script src="moteur/contenus/activites.js"></script>
+<script src="moteur/contenus/histoire.js"></script>
+<script src="moteur/jeux/base.js"></script>
+<script src="moteur/jeux/quiz.js"></script>
+<script src="moteur/jeux/ordre.js"></script>
+<script src="moteur/moteur.js"></script>
+<script src="js/commun.js"></script>
+<script src="js/solo.js"></script>
